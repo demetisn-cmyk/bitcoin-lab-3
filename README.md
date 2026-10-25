@@ -25,7 +25,7 @@ A research-first BTC/EUR forecasting dashboard. It is an educational experiment,
 5. Wait for the workflow to finish, then reload the Pages site.
 
 ## Optional CoinGecko key
-Kraken is tried first and does not require an API key; Binance and then CoinGecko are fallbacks. For more reliable CoinGecko fallback access, For more reliable fallback access, add a CoinGecko Demo API key under **Settings → Secrets and variables → Actions → New repository secret** with the name `COINGECKO_DEMO_API_KEY`. Never put the key in HTML, source files, screenshots, or commit history.
+Kraken is tried first and does not require an API key; Binance and then CoinGecko are fallbacks. If the CoinGecko fallback is needed, add a CoinGecko Demo API key under **Settings → Secrets and variables → Actions → New repository secret** with the name `COINGECKO_DEMO_API_KEY`. Never put the key in HTML, source files, screenshots, or commit history.
 
 ## Run locally
 Requires Python 3.11+ and no third-party packages:
