@@ -2,6 +2,14 @@ name: Bitcoin Lab daily update
 
 on:
   workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - "index.html"
+      - "README.md"
+      - "scripts/**"
+      - "tests/**"
+      - ".github/workflows/daily-update.yml"
   schedule:
     - cron: "17 5 * * *"
 
