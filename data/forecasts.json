@@ -1,0 +1,5 @@
+{
+  "schema_version": 1,
+  "created_note": "Prospective ledger; entries begin on first successful scheduled run.",
+  "forecasts": []
+}
