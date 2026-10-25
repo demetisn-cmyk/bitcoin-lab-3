@@ -1,0 +1,8 @@
+{
+  "schema_version": 1,
+  "source": "CoinGecko",
+  "currency": "EUR",
+  "last_updated": null,
+  "prices": [],
+  "status": "not_updated"
+}
