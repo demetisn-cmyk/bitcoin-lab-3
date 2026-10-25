@@ -4,7 +4,7 @@ A research-first BTC/EUR forecasting dashboard. It is an educational experiment,
 
 ## What it does
 - Publishes a static dashboard suitable for GitHub Pages.
-- Refreshes BTC/EUR daily prices using CoinGecko.
+- Refreshes BTC/EUR daily prices using the public Binance exchange API, with CoinGecko as a fallback.
 - Produces 30- and 90-day forecasts once per day and stores each forecast with its origin date, before its outcome is known.
 - Evaluates matured forecasts against a zero-return baseline using pooled mean absolute error (MAE) and the fraction of cases where the model beats zero on absolute error. The dashboard pools 30- and 90-day outcomes, so treat the aggregate as a high-level summary rather than a horizon-specific verdict.
 - Keeps the forecast signal separate from the risk-adjusted research score.
@@ -22,10 +22,10 @@ A research-first BTC/EUR forecasting dashboard. It is an educational experiment,
 2. Under **Build and deployment**, choose **Deploy from a branch**, select `main` and `/ (root)`, then Save.
 3. This repository is currently private. GitHub Pages availability for private repositories depends on your plan. To publish the dashboard publicly, either make the repository **Public** under Settings → General → Danger Zone, or use an eligible private-repository Pages plan. Public source code must never contain secrets.
 4. Open **Actions** and enable workflows if GitHub asks. The workflow runs on relevant code changes, on a daily schedule, and can be started manually.
-5. Wait for the workflow to finish, then reload the Pages site. First-time data collection may take a few minutes.
+5. Wait for the workflow to finish, then reload the Pages site.
 
 ## Optional CoinGecko key
-The updater tries the public endpoint without a key, subject to rate limits. For more reliable access, create a CoinGecko Demo API key and add it under **Settings → Secrets and variables → Actions → New repository secret** with the name `COINGECKO_DEMO_API_KEY`. Never put the key in HTML, source files, screenshots, or commit history.
+Binance is tried first and does not require an API key. If the Binance endpoint is unavailable, the updater falls back to CoinGecko. For more reliable fallback access, add a CoinGecko Demo API key under **Settings → Secrets and variables → Actions → New repository secret** with the name `COINGECKO_DEMO_API_KEY`. Never put the key in HTML, source files, screenshots, or commit history.
 
 ## Run locally
 Requires Python 3.11+ and no third-party packages:
@@ -41,4 +41,4 @@ The baseline model uses a shrunk historical daily log-return mean over a trailin
 The dashboard's interactive parameters are for **exploration only**; changing them does not rewrite forecasts already in the ledger. Forecast evaluation uses stored predictions and prices available after each forecast origin.
 
 ## Data and attribution
-Market data is requested from [CoinGecko](https://www.coingecko.com/). Availability, granularity and rate limits can change. Data is denominated in EUR; it is not an exchange execution price.
+Market data is requested from Binance's public API, with CoinGecko as a fallback. Availability, granularity and rate limits can change. Data is denominated in EUR; it is not an exchange execution price.
