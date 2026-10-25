@@ -12,6 +12,7 @@ LATEST = ROOT / "data" / "latest.json"
 LEDGER = ROOT / "data" / "forecasts.json"
 COINGECKO_API = "https://api.coingecko.com/api/v3/coins/bitcoin/market_chart?vs_currency=eur&days=730&interval=daily"
 BINANCE_API = "https://api.binance.com/api/v3/klines?symbol=BTCEUR&interval=1d&limit=1000"
+KRAKEN_API = "https://api.kraken.com/0/public/OHLC?pair=XBTEUR&interval=1440"
 HORIZONS = (30, 90)
 LOOKBACK = 180
 SHRINKAGE = 0.35
@@ -38,6 +39,30 @@ def request_json(url, headers=None):
             return json.loads(response.read().decode("utf-8"))
     except (HTTPError, URLError, TimeoutError) as exc:
         raise RuntimeError(f"HTTP request failed for {url.split('?')[0]}: {exc}") from exc
+
+def fetch_kraken_prices():
+    payload = request_json(KRAKEN_API, {"User-Agent": "BitcoinLab3/1.0"})
+    errors = payload.get("error", [])
+    if errors:
+        raise RuntimeError("Kraken API error: " + ", ".join(errors))
+    result = payload.get("result", {})
+    pair_key = next((k for k in result if k != "last"), None)
+    candles = result.get(pair_key, []) if pair_key else []
+    now_seconds = int(datetime.now(timezone.utc).timestamp())
+    daily = {}
+    for candle in candles:
+        if not isinstance(candle, list) or len(candle) < 5:
+            continue
+        open_seconds, close_price = int(candle[0]), float(candle[4])
+        # Only accept fully closed UTC daily candles.
+        if open_seconds + 86400 > now_seconds or not math.isfinite(close_price) or close_price <= 0:
+            continue
+        date = datetime.fromtimestamp(open_seconds, tz=timezone.utc).date().isoformat()
+        daily[date] = close_price
+    prices = [{"date": d, "close": round(daily[d], 6)} for d in sorted(daily)]
+    if len(prices) < 100:
+        raise RuntimeError("Kraken returned fewer than 100 completed daily BTC/EUR candles.")
+    return prices
 
 def fetch_binance_prices():
     payload = request_json(BINANCE_API, {"User-Agent": "BitcoinLab3/1.0"})
@@ -85,7 +110,7 @@ def fetch_coingecko_prices():
 def fetch_prices():
     # Prefer the public exchange endpoint; fall back to CoinGecko if the exchange endpoint is unavailable.
     errors = []
-    for name, fetcher in (("Binance", fetch_binance_prices), ("CoinGecko", fetch_coingecko_prices)):
+    for name, fetcher in (("Kraken", fetch_kraken_prices), ("Binance", fetch_binance_prices), ("CoinGecko", fetch_coingecko_prices)):
         try:
             return fetcher(), name
         except Exception as exc:
