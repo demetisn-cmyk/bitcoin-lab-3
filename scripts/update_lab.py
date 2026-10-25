@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Fetch BTC/EUR daily prices and maintain a prospective, auditable forecast ledger."""
+"""Fetch daily BTC/EUR prices and maintain an auditable prospective forecast ledger."""
 from __future__ import annotations
 import json, math, os, statistics, sys
 from datetime import datetime, timezone, timedelta
@@ -10,7 +10,8 @@ from urllib.request import Request, urlopen
 ROOT = Path(__file__).resolve().parents[1]
 LATEST = ROOT / "data" / "latest.json"
 LEDGER = ROOT / "data" / "forecasts.json"
-API = "https://api.coingecko.com/api/v3/coins/bitcoin/market_chart?vs_currency=eur&days=730&interval=daily"
+COINGECKO_API = "https://api.coingecko.com/api/v3/coins/bitcoin/market_chart?vs_currency=eur&days=730&interval=daily"
+BINANCE_API = "https://api.binance.com/api/v3/klines?symbol=BTCEUR&interval=1d&limit=1000"
 HORIZONS = (30, 90)
 LOOKBACK = 180
 SHRINKAGE = 0.35
@@ -30,33 +31,66 @@ def write_json(path, obj):
     tmp.write_text(json.dumps(obj, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     tmp.replace(path)
 
-def fetch_prices():
+def request_json(url, headers=None):
+    req = Request(url, headers=headers or {})
+    try:
+        with urlopen(req, timeout=30) as response:
+            return json.loads(response.read().decode("utf-8"))
+    except (HTTPError, URLError, TimeoutError) as exc:
+        raise RuntimeError(f"HTTP request failed for {url.split('?')[0]}: {exc}") from exc
+
+def fetch_binance_prices():
+    payload = request_json(BINANCE_API, {"User-Agent": "BitcoinLab3/1.0"})
+    if not isinstance(payload, list):
+        raise RuntimeError("Binance returned an unexpected payload.")
+    now_ms = int(datetime.now(timezone.utc).timestamp() * 1000)
+    daily = {}
+    for candle in payload:
+        if not isinstance(candle, list) or len(candle) < 7:
+            continue
+        open_ms, close_price, close_ms = int(candle[0]), float(candle[4]), int(candle[6])
+        # Exclude the still-open daily candle to avoid using a moving close as a completed observation.
+        if close_ms >= now_ms or not math.isfinite(close_price) or close_price <= 0:
+            continue
+        date = datetime.fromtimestamp(open_ms / 1000, tz=timezone.utc).date().isoformat()
+        daily[date] = close_price
+    prices = [{"date": d, "close": round(daily[d], 6)} for d in sorted(daily)]
+    if len(prices) < 100:
+        raise RuntimeError("Binance returned fewer than 100 completed daily BTC/EUR candles.")
+    return prices
+
+def fetch_coingecko_prices():
     headers = {"User-Agent": "BitcoinLab3/1.0 (+research dashboard)", "accept": "application/json"}
     key = os.environ.get("COINGECKO_DEMO_API_KEY", "").strip()
     if key:
         headers["x-cg-demo-api-key"] = key
-    req = Request(API, headers=headers)
-    try:
-        with urlopen(req, timeout=30) as response:
-            payload = json.loads(response.read().decode("utf-8"))
-    except (HTTPError, URLError, TimeoutError) as exc:
-        raise RuntimeError(f"CoinGecko request failed: {exc}") from exc
+    payload = request_json(COINGECKO_API, headers)
     raw = payload.get("prices")
     if not isinstance(raw, list) or len(raw) < 100:
         raise RuntimeError("CoinGecko returned too little price history.")
-    # Keep the final observation for each UTC calendar date.
     daily = {}
+    now_date = datetime.now(timezone.utc).date().isoformat()
     for item in raw:
         if not isinstance(item, list) or len(item) < 2:
             continue
-        dt = datetime.fromtimestamp(item[0] / 1000, tz=timezone.utc).date().isoformat()
+        date = datetime.fromtimestamp(item[0] / 1000, tz=timezone.utc).date().isoformat()
         price = float(item[1])
-        if math.isfinite(price) and price > 0:
-            daily[dt] = price
+        if date < now_date and math.isfinite(price) and price > 0:
+            daily[date] = price
     prices = [{"date": d, "close": round(daily[d], 6)} for d in sorted(daily)]
     if len(prices) < 100:
-        raise RuntimeError("Could not normalize CoinGecko prices into daily observations.")
+        raise RuntimeError("Could not normalize CoinGecko prices into completed daily observations.")
     return prices
+
+def fetch_prices():
+    # Prefer the public exchange endpoint; fall back to CoinGecko if the exchange endpoint is unavailable.
+    errors = []
+    for name, fetcher in (("Binance", fetch_binance_prices), ("CoinGecko", fetch_coingecko_prices)):
+        try:
+            return fetcher(), name
+        except Exception as exc:
+            errors.append(f"{name}: {exc}")
+    raise RuntimeError("All market-data providers failed. " + " | ".join(errors))
 
 def log_returns(prices):
     out = []
@@ -119,8 +153,8 @@ def mature_forecasts(ledger, prices):
         if f.get("status") != "pending":
             continue
         target = f.get("target_date")
-        # Use the first available close on/after target, no more than 3 calendar days later.
-        match = next((d for d in dates if target <= d <= (datetime.fromisoformat(target).date() + timedelta(days=3)).isoformat()), None)
+        target_end = (datetime.fromisoformat(target).date() + timedelta(days=3)).isoformat()
+        match = next((d for d in dates if target <= d <= target_end), None)
         if match and f.get("origin_price_eur", 0) > 0:
             f["realized_date"] = match
             f["realized_price_eur"] = by_date[match]["close"]
@@ -130,10 +164,10 @@ def mature_forecasts(ledger, prices):
     return changed
 
 def main():
-    prices = fetch_prices()
+    prices, source = fetch_prices()
     latest = {
         "schema_version": 1,
-        "source": "CoinGecko",
+        "source": source,
         "currency": "EUR",
         "last_updated": datetime.now(timezone.utc).isoformat(timespec="seconds"),
         "prices": prices,
@@ -142,20 +176,19 @@ def main():
     ledger = read_json(LEDGER, {"schema_version": 1, "created_note": "Prospective ledger; entries begin on first successful scheduled run.", "forecasts": []})
     if not isinstance(ledger.get("forecasts"), list):
         raise RuntimeError("Forecast ledger has an invalid schema.")
-    changed = mature_forecasts(ledger, prices)
+    mature_forecasts(ledger, prices)
     existing = {f.get("id") for f in ledger["forecasts"]}
     for horizon in HORIZONS:
         f = build_forecast(prices, horizon, datetime.now(timezone.utc).date())
         if f["id"] not in existing:
             ledger["forecasts"].append(f)
-            changed = True
     ledger["forecasts"].sort(key=lambda f: (f.get("origin_date", ""), f.get("horizon_days", 0)))
     ledger["last_updated"] = latest["last_updated"]
     write_json(LATEST, latest)
     write_json(LEDGER, ledger)
     matured = sum(f.get("status") == "matured" for f in ledger["forecasts"])
     pending = sum(f.get("status") == "pending" for f in ledger["forecasts"])
-    print(f"Updated {len(prices)} daily prices; ledger has {len(ledger['forecasts'])} forecasts ({matured} matured, {pending} pending).")
+    print(f"Updated {len(prices)} daily prices from {source}; ledger has {len(ledger['forecasts'])} forecasts ({matured} matured, {pending} pending).")
     print("Note: forecasts start prospectively; this run does not backfill historical predictions.")
 
 if __name__ == "__main__":
