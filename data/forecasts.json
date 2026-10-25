@@ -1,5 +1,49 @@
 {
   "schema_version": 1,
   "created_note": "Prospective ledger; entries begin on first successful scheduled run.",
-  "forecasts": []
+  "forecasts": [
+    {
+      "id": "2026-10-24-30d",
+      "origin_date": "2026-10-24",
+      "target_date": "2026-11-23",
+      "horizon_days": 30,
+      "origin_price_eur": 72166.2,
+      "model": "shrunk_trailing_mean_v1",
+      "lookback_days": 180,
+      "shrinkage": 0.35,
+      "predicted_log_return": 0.00520663,
+      "zero_baseline_log_return": 0.0,
+      "downside_tail_proxy": 0.13901074,
+      "uncertainty_penalty": 0.1649756,
+      "assumed_cost": 0.005,
+      "risk_adjusted_score": -0.22129192,
+      "status": "pending",
+      "realized_log_return": null,
+      "realized_date": null,
+      "realized_price_eur": null,
+      "created_at_utc": "2026-10-25T23:01:16+00:00"
+    },
+    {
+      "id": "2026-10-24-90d",
+      "origin_date": "2026-10-24",
+      "target_date": "2027-01-22",
+      "horizon_days": 90,
+      "origin_price_eur": 72166.2,
+      "model": "shrunk_trailing_mean_v1",
+      "lookback_days": 180,
+      "shrinkage": 0.35,
+      "predicted_log_return": 0.01561988,
+      "zero_baseline_log_return": 0.0,
+      "downside_tail_proxy": 0.24077367,
+      "uncertainty_penalty": 0.28574612,
+      "assumed_cost": 0.005,
+      "risk_adjusted_score": -0.37302685,
+      "status": "pending",
+      "realized_log_return": null,
+      "realized_date": null,
+      "realized_price_eur": null,
+      "created_at_utc": "2026-10-25T23:01:16+00:00"
+    }
+  ],
+  "last_updated": "2026-10-25T23:01:16+00:00"
 }
