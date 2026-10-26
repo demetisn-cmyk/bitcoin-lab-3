@@ -212,7 +212,9 @@ def annotate_ledger_records(ledger):
             forecast["model_version"] = "legacy_unknown"
             forecast["provenance_status"] = "legacy_unknown"
             changed = True
-        forecast.setdefault("evaluation_eligible", True)
+        if "evaluation_eligible" not in forecast:
+            forecast["evaluation_eligible"] = True
+            changed = True
     groups = {}
     for index, forecast in enumerate(records):
         key = (
