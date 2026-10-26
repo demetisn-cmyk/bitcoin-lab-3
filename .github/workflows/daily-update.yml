@@ -33,6 +33,18 @@ jobs:
           python-version: "3.12"
       - name: Run tests
         run: python -m unittest discover -s tests -v
+      - name: Validate dashboard JavaScript syntax
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import re
+          html = Path("index.html").read_text(encoding="utf-8")
+          scripts = re.findall(r"<script>(.*?)</script>", html, flags=re.S)
+          if not scripts:
+              raise SystemExit("No inline dashboard script found")
+          Path("/tmp/bitcoin-lab-dashboard.js").write_text("\\n".join(scripts), encoding="utf-8")
+          PY
+          node --check /tmp/bitcoin-lab-dashboard.js
       - name: Refresh prices and forecasts
         env:
           COINGECKO_DEMO_API_KEY: ${{ secrets.COINGECKO_DEMO_API_KEY }}
