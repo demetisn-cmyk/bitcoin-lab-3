@@ -137,6 +137,9 @@ def run_walk_forward(prices, horizons=(30, 90), lookback=LOOKBACK):
 def main():
     prices = load_prices()
     result = run_walk_forward(prices)
+    latest_payload = json.loads(LATEST.read_text(encoding="utf-8"))
+    # Keep the artifact byte-stable when the underlying completed-price dataset is unchanged.
+    result["generated_at_utc"] = latest_payload.get("last_updated", result["generated_at_utc"])
     OUTPUT.parent.mkdir(parents=True, exist_ok=True)
     tmp = OUTPUT.with_suffix(".json.tmp")
     tmp.write_text(json.dumps(result, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
