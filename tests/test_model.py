@@ -1,8 +1,11 @@
 import importlib.util
+import json
 import math
+import tempfile
 import unittest
-from datetime import date, timedelta
+from datetime import date, datetime, timedelta, timezone
 from pathlib import Path
+from unittest.mock import patch
 
 MODULE_PATH = Path(__file__).resolve().parents[1] / "scripts" / "update_lab.py"
 spec = importlib.util.spec_from_file_location("update_lab", MODULE_PATH)
@@ -13,6 +16,11 @@ ARENA_PATH = Path(__file__).resolve().parents[1] / "scripts" / "model_arena.py"
 arena_spec = importlib.util.spec_from_file_location("model_arena", ARENA_PATH)
 arena = importlib.util.module_from_spec(arena_spec)
 arena_spec.loader.exec_module(arena)
+
+SENTINEL_PATH = Path(__file__).resolve().parents[1] / "scripts" / "research_sentinel.py"
+sentinel_spec = importlib.util.spec_from_file_location("research_sentinel", SENTINEL_PATH)
+sentinel = importlib.util.module_from_spec(sentinel_spec)
+sentinel_spec.loader.exec_module(sentinel)
 
 class ForecastPipelineTests(unittest.TestCase):
     def test_log_return(self):
@@ -141,6 +149,102 @@ class ForecastPipelineTests(unittest.TestCase):
             self.assertGreater(section["overlapping"]["zero_return_v1"]["n"], 0)
             self.assertGreater(section["non_overlapping"]["zero_return_v1"]["n"], 0)
             self.assertIn("momentum_30_v1", section["overlapping"])
+
+
+    def test_corrupt_json_fails_closed_and_preserves_original_bytes(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / "forecasts.json"
+            original = b'{"forecasts": [broken'
+            path.write_bytes(original)
+            with self.assertRaises(RuntimeError):
+                module.read_json(path, {"forecasts": []})
+            self.assertEqual(path.read_bytes(), original)
+
+    def test_log_returns_skips_missing_calendar_days(self):
+        prices = [
+            {"date": "2026-01-01", "close": 100.0},
+            {"date": "2026-01-02", "close": 110.0},
+            {"date": "2026-01-04", "close": 121.0},
+            {"date": "2026-01-05", "close": 120.0},
+        ]
+        got = module.log_returns(prices)
+        self.assertEqual([item[0] for item in got], ["2026-01-02", "2026-01-05"])
+        self.assertAlmostEqual(got[0][1], math.log(1.1))
+
+    def test_zero_return_baseline_direction_is_unavailable(self):
+        result = arena.summarize([(0.0, 0.2), (0.0, -0.1), (0.0, 0.05)])
+        self.assertIsNone(result["directional_accuracy"])
+        self.assertEqual(result["n"], 3)
+
+    def test_empirical_interval_uses_only_past_outcomes(self):
+        prices = []
+        start = date(2024, 1, 1)
+        p = 100.0
+        for i in range(360):
+            p *= 1.002 if i % 5 else 0.994
+            prices.append({"date": (start + timedelta(days=i)).isoformat(), "close": p})
+        origin = 300
+        first = arena.empirical_horizon_interval(prices, origin, 10, min_samples=10)
+        changed = [dict(x) for x in prices]
+        for i in range(origin + 1, len(changed)):
+            changed[i]["close"] *= 3.0
+        second = arena.empirical_horizon_interval(changed, origin, 10, min_samples=10)
+        self.assertEqual(first, second)
+
+    def test_regime_classification_is_past_only(self):
+        prices = []
+        start = date(2024, 1, 1)
+        p = 100.0
+        for i in range(250):
+            p *= 1.003 if i % 3 else 0.995
+            prices.append({"date": (start + timedelta(days=i)).isoformat(), "close": p})
+        origin = 220
+        before = arena.classify_regime(prices, origin)
+        altered = [dict(x) for x in prices]
+        for i in range(origin + 1, len(altered)):
+            altered[i]["close"] *= 0.1
+        self.assertEqual(before, arena.classify_regime(altered, origin))
+
+    def test_sentinel_reports_duplicates_gaps_and_provider_switch(self):
+        today = date(2026, 1, 10)
+        prices = [
+            {"date": "2026-01-07", "close": 100.0},
+            {"date": "2026-01-08", "close": 101.0},
+            {"date": "2026-01-08", "close": 101.0},
+            {"date": "2026-01-10", "close": 102.0},
+        ]
+        latest = {"prices": prices, "source": "Binance", "source_switch_detected": True,
+                  "historical_observation_provenance": "unknown_before_observation_level_tracking",
+                  "last_updated": "2026-01-10T00:00:00+00:00"}
+        report = sentinel.inspect_artifacts(latest, {"forecasts": []}, today=today)
+        codes = {item["code"] for item in report["warnings"] + report["failures"]}
+        self.assertIn("duplicate_date", codes)
+        self.assertIn("date_gap", codes)
+        self.assertIn("provider_switch", codes)
+        self.assertEqual(report["status"], "fail")
+
+    def test_production_kraken_parser_with_mocked_provider_response(self):
+        now = datetime.now(timezone.utc)
+        base = (now.date() - timedelta(days=120))
+        candles = []
+        for i in range(110):
+            opened = datetime.combine(base + timedelta(days=i), datetime.min.time(), tzinfo=timezone.utc)
+            candles.append([int(opened.timestamp()), "1", "1", "1", str(100 + i), "1", "1", 1])
+        today_open = datetime.combine(now.date(), datetime.min.time(), tzinfo=timezone.utc)
+        candles.append([int(today_open.timestamp()), "1", "1", "1", "999999", "1", "1", 1])
+        payload = {"error": [], "result": {"XXBTZEUR": candles, "last": 0}}
+        with patch.object(module, "request_json", return_value=payload):
+            prices = module.fetch_kraken_prices()
+        self.assertEqual(len(prices), 110)
+        self.assertNotEqual(prices[-1]["close"], 999999.0)
+
+    def test_atomic_json_write_is_noop_for_identical_content(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / "artifact.json"
+            self.assertTrue(module.write_json(path, {"ok": True}))
+            before = path.stat().st_mtime_ns
+            self.assertFalse(module.write_json(path, {"ok": True}))
+            self.assertEqual(path.stat().st_mtime_ns, before)
 
 if __name__ == "__main__":
     unittest.main()
