@@ -44,9 +44,38 @@ The updater writes `data/latest.json` and `data/forecasts.json`.
 The live forecast ledger records model version and data cutoff on new entries. Existing entries are retained; maturity requires an observed close on the exact target date, so missing target dates remain pending instead of being silently shifted.
 
 ## Method summary
-The baseline model uses a shrunk historical daily log-return mean over a trailing window. For horizon `h`, its expected log return is the trailing mean multiplied by `h` and a shrinkage factor. The risk-adjusted score subtracts a downside-tail proxy, a volatility uncertainty penalty and an assumed round-trip cost. These are transparent research knobs, not calibrated probabilities or validated trading edges.
+The baseline forecast model uses a shrunk historical daily log-return mean over a trailing window. For horizon h, its expected log return is the trailing mean multiplied by h and a shrinkage factor. The separately versioned risk score now uses historical returns matched to the actual forecast horizon: the empirical 5th percentile contributes a downside proxy and half the 5th–95th percentile range contributes an uncertainty penalty. At least 60 consecutive, horizon-matched historical outcomes are required; otherwise the score is unavailable. Samples overlap and the coefficients/cost assumption are not calibrated, so the score remains an experimental heuristic—not a probability, forecast, or validated trading edge.
 
 The dashboard's interactive parameters are for **exploration only**; changing them does not rewrite forecasts already in the ledger. Forecast evaluation uses stored predictions and prices available after each forecast origin.
 
 ## Data and attribution
 Market data is requested from Kraken's public API, with Binance and CoinGecko as fallbacks. Availability, granularity and rate limits can change. Data is denominated in EUR; it is not an exchange execution price.
+
+## 4.0C · Uncertainty and descriptive regimes
+
+The Model Arena now calculates an experimental 5th–95th percentile range from earlier, fully realized returns matching the forecast horizon. At every historical origin, only horizon outcomes that had already matured by that origin can enter the calibration sample. At least 60 calibration outcomes are required before a range is emitted. This is an empirical historical range, **not a calibrated probability interval**: historical outcomes overlap, the sample is short, and coverage may change across market conditions. The artifact reports realized coverage and average width when observations are available.
+
+Past-only regime labels combine:
+- a 30-day cumulative log-return trend (up, down, or flat, using ±2% thresholds);
+- trailing 30-day volatility relative to trailing 180-day population volatility (high at 1.25× or more, low at 0.75× or less, otherwise normal).
+
+Regimes are descriptive labels based on data through the origin, not predictions of future regimes. Per-regime errors are descriptive; small groups must not be interpreted as reliable evidence. MAE/RMSE are reported in **log-return units**, not simple percentage returns.
+
+## 4.0D · Data-quality sentinel and controlled research
+
+scripts/research_sentinel.py writes data/quality_report.json, including status, data date, source, warnings, failures and actionable diagnostic codes. It checks JSON/schema integrity, duplicate dates, non-chronological observations, invalid closes, missing calendar days, stale data, unusually large daily moves, provider changes and ledger record integrity. Critical failures stop the workflow before model-arena evaluation and before generated research artifacts are committed. A large price move is flagged for review rather than automatically discarded.
+
+The updater now fails closed on malformed persistent JSON, validates incoming prices before writing, writes JSON atomically, avoids byte-identical rewrites, and calculates returns only across consecutive calendar days. Existing forecast rows are retained. Legacy rows without explicit model-version metadata are marked legacy_unknown; when an exactly equivalent forecast row with known version exists, the legacy row remains in the ledger but is excluded from aggregate metrics to prevent double counting. This is an evaluation policy, not a claim that missing historical provenance has been recovered.
+
+The registered model set is deliberately small and fixed. The arena records model definitions, uses exact target dates, rejects origins with gaps in the assumed daily-return window, and chooses non-overlapping origins by calendar date. A zero-return baseline's directional accuracy is shown as unavailable because it does not predict a direction. No candidate is promoted automatically and the production model is not changed by experimental results.
+
+## Validation
+
+Run the deterministic test suite and syntax checks locally:
+
+    python -m unittest discover -s tests -v
+    python -m py_compile scripts/update_lab.py scripts/model_arena.py scripts/research_sentinel.py
+    python scripts/research_sentinel.py
+    python scripts/model_arena.py
+
+The daily workflow also checks dashboard JavaScript syntax, runs the test suite, runs the data-quality sentinel, then builds the Model Arena. Historical data and all original forecast records are retained. This project remains an educational research lab, not a source of investment advice or evidence of a profitable trading strategy.

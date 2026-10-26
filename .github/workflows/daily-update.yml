@@ -2,6 +2,8 @@ name: Bitcoin Lab daily update
 
 on:
   workflow_dispatch:
+  pull_request:
+    branches: [main]
   push:
     branches: [main]
     paths:
@@ -21,7 +23,45 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
+  validate:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Run deterministic tests
+        run: python -m unittest discover -s tests -v
+      - name: Compile Python modules
+        run: python -m py_compile scripts/update_lab.py scripts/model_arena.py scripts/research_sentinel.py
+      - name: Validate dashboard JavaScript syntax
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import re
+          html = Path("index.html").read_text(encoding="utf-8")
+          scripts = re.findall(r"<script>(.*?)</script>", html, flags=re.S)
+          if not scripts:
+              raise SystemExit("No inline dashboard script found")
+          Path("/tmp/bitcoin-lab-dashboard.js").write_text("\n".join(scripts), encoding="utf-8")
+          PY
+          node --check /tmp/bitcoin-lab-dashboard.js
+      - name: Validate committed JSON artifacts
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          for path in Path("data").glob("*.json"):
+              json.loads(path.read_text(encoding="utf-8"))
+              print("valid JSON:", path)
+          PY
+
   update:
+    if: github.event_name != 'pull_request'
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
@@ -33,6 +73,8 @@ jobs:
           python-version: "3.12"
       - name: Run tests
         run: python -m unittest discover -s tests -v
+      - name: Compile Python modules
+        run: python -m py_compile scripts/update_lab.py scripts/model_arena.py scripts/research_sentinel.py
       - name: Validate dashboard JavaScript syntax
         run: |
           python - <<'PY'
@@ -49,13 +91,25 @@ jobs:
         env:
           COINGECKO_DEMO_API_KEY: ${{ secrets.COINGECKO_DEMO_API_KEY }}
         run: python scripts/update_lab.py
+      - name: Run data-quality sentinel
+        run: python scripts/research_sentinel.py
       - name: Build walk-forward model arena
         run: python scripts/model_arena.py
+      - name: Validate generated JSON artifacts
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          for name in ("latest.json", "forecasts.json", "model_arena.json", "quality_report.json"):
+              path = Path("data") / name
+              json.loads(path.read_text(encoding="utf-8"))
+              print("valid JSON:", path)
+          PY
       - name: Commit updated research data
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add data/latest.json data/forecasts.json data/model_arena.json
+          git add data/latest.json data/forecasts.json data/model_arena.json data/quality_report.json
           if git diff --cached --quiet; then
             echo "No data changes to commit."
           else

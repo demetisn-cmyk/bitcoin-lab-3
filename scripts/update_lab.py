@@ -22,16 +22,77 @@ COST = 0.005
 MODEL_VERSION = "1.0"
 
 def read_json(path, fallback):
+    """Read JSON without ever treating corruption as an empty persistent record."""
     try:
-        return json.loads(path.read_text(encoding="utf-8"))
-    except (FileNotFoundError, json.JSONDecodeError):
+        raw = path.read_text(encoding="utf-8")
+    except FileNotFoundError:
         return fallback
+    try:
+        value = json.loads(raw)
+    except json.JSONDecodeError as exc:
+        raise RuntimeError(f"Refusing to overwrite malformed JSON at {path} (line {exc.lineno}, column {exc.colno}). Original file preserved.") from exc
+    if not isinstance(value, dict):
+        raise RuntimeError(f"Refusing to use {path}: expected a JSON object; original file preserved.")
+    return value
+
+def validate_persistent_schemas(latest, ledger):
+    """Reject structurally invalid persisted inputs before generating replacement files."""
+    if latest:
+        prices = latest.get("prices")
+        if not isinstance(prices, list) or not prices:
+            raise RuntimeError("Existing latest.json has an invalid schema; original file preserved.")
+        seen = set()
+        for item in prices:
+            if not isinstance(item, dict):
+                raise RuntimeError("Existing latest.json contains a non-object price; original file preserved.")
+            try:
+                day = datetime.fromisoformat(item["date"]).date().isoformat()
+                close = float(item["close"])
+            except (KeyError, TypeError, ValueError) as exc:
+                raise RuntimeError("Existing latest.json contains an invalid date/close; original file preserved.") from exc
+            if day in seen or not math.isfinite(close) or close <= 0:
+                raise RuntimeError("Existing latest.json contains duplicate dates or invalid closes; original file preserved.")
+            seen.add(day)
+    forecasts = ledger.get("forecasts")
+    if not isinstance(forecasts, list):
+        raise RuntimeError("Forecast ledger has an invalid schema; original file preserved.")
+    for index, forecast in enumerate(forecasts):
+        if not isinstance(forecast, dict):
+            raise RuntimeError(f"Forecast ledger record {index} is not an object; original file preserved.")
+        try:
+            if not isinstance(forecast.get("id"), str) or not forecast["id"]:
+                raise ValueError("missing ID")
+            datetime.fromisoformat(forecast["origin_date"])
+            datetime.fromisoformat(forecast["target_date"])
+            horizon = forecast["horizon_days"]
+            origin_price = float(forecast["origin_price_eur"])
+            predicted = float(forecast["predicted_log_return"])
+            status = forecast["status"]
+            if isinstance(horizon, bool) or not isinstance(horizon, int) or horizon <= 0:
+                raise ValueError("invalid horizon")
+            if not math.isfinite(origin_price) or origin_price <= 0 or not math.isfinite(predicted):
+                raise ValueError("invalid price or prediction")
+            if status not in ("pending", "matured"):
+                raise ValueError("invalid status")
+        except (KeyError, TypeError, ValueError) as exc:
+            raise RuntimeError(f"Forecast ledger record {index} has an invalid schema ({exc}); original file preserved.") from exc
 
 def write_json(path, obj):
+    """Atomically replace a JSON artifact and skip byte-identical writes."""
     path.parent.mkdir(parents=True, exist_ok=True)
+    content = json.dumps(obj, ensure_ascii=False, indent=2) + "\n"
+    try:
+        if path.read_text(encoding="utf-8") == content:
+            return False
+    except FileNotFoundError:
+        pass
     tmp = path.with_suffix(path.suffix + ".tmp")
-    tmp.write_text(json.dumps(obj, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    with tmp.open("w", encoding="utf-8", newline="\n") as handle:
+        handle.write(content)
+        handle.flush()
+        os.fsync(handle.fileno())
     tmp.replace(path)
+    return True
 
 def request_json(url, headers=None):
     req = Request(url, headers=headers or {})
@@ -119,10 +180,19 @@ def fetch_prices():
     raise RuntimeError("All market-data providers failed. " + " | ".join(errors))
 
 def log_returns(prices):
+    """Return only true one-calendar-day log returns; gaps are never mislabeled daily."""
     out = []
     for prev, cur in zip(prices, prices[1:]):
-        if prev["close"] > 0 and cur["close"] > 0:
-            out.append((cur["date"], math.log(cur["close"] / prev["close"])))
+        try:
+            prev_day = datetime.fromisoformat(prev["date"]).date()
+            cur_day = datetime.fromisoformat(cur["date"]).date()
+            prev_close, cur_close = float(prev["close"]), float(cur["close"])
+        except (KeyError, TypeError, ValueError):
+            continue
+        if (cur_day - prev_day).days != 1:
+            continue
+        if math.isfinite(prev_close) and math.isfinite(cur_close) and prev_close > 0 and cur_close > 0:
+            out.append((cur["date"], math.log(cur_close / prev_close)))
     return out
 
 def quantile(values, q):
@@ -135,17 +205,62 @@ def quantile(values, q):
         return vals[lo]
     return vals[lo] * (hi - pos) + vals[hi] * (pos - lo)
 
+def horizon_log_returns(prices, horizon):
+    """Historical horizon-matched log returns; each window must be calendar-consecutive."""
+    out = []
+    if horizon <= 0:
+        return out
+    for start in range(0, len(prices) - horizon):
+        segment = prices[start:start + horizon + 1]
+        if len(segment) != horizon + 1:
+            continue
+        try:
+            start_day = datetime.fromisoformat(segment[0]["date"]).date()
+            end_day = datetime.fromisoformat(segment[-1]["date"]).date()
+            if (end_day - start_day).days != horizon:
+                continue
+            if any((datetime.fromisoformat(b["date"]).date() -
+                    datetime.fromisoformat(a["date"]).date()).days != 1
+                   for a, b in zip(segment, segment[1:])):
+                continue
+            start_close, end_close = float(segment[0]["close"]), float(segment[-1]["close"])
+            if start_close > 0 and end_close > 0 and math.isfinite(start_close) and math.isfinite(end_close):
+                out.append(math.log(end_close / start_close))
+        except (KeyError, TypeError, ValueError):
+            continue
+    return out
+
 def build_forecast(prices, horizon, now_date):
+    recent_prices = prices[-(LOOKBACK + 1):]
+    if len(recent_prices) != LOOKBACK + 1:
+        raise RuntimeError(f"At least {LOOKBACK + 1} consecutive daily closes are required before forecasting.")
+    for previous, current in zip(recent_prices, recent_prices[1:]):
+        try:
+            gap = (datetime.fromisoformat(current["date"]).date() -
+                   datetime.fromisoformat(previous["date"]).date()).days
+        except (KeyError, TypeError, ValueError) as exc:
+            raise RuntimeError("Invalid date in trailing forecast window.") from exc
+        if gap != 1:
+            raise RuntimeError(f"Forecast window contains a {gap}-day gap between {previous.get('date')} and {current.get('date')}; refusing to label multi-day returns as daily.")
     rets = log_returns(prices)
     window = [r for _, r in rets[-LOOKBACK:]]
     if len(window) < 60:
         raise RuntimeError("At least 60 daily returns are required before forecasting.")
     daily_mean = statistics.fmean(window)
-    daily_vol = statistics.pstdev(window)
     mu = daily_mean * horizon * SHRINKAGE
-    downside_tail = max(0.0, -quantile(window, 0.05)) * math.sqrt(horizon)
-    uncertainty = 1.645 * daily_vol * math.sqrt(horizon)
-    score = mu - LAMBDA * downside_tail - GAMMA * uncertainty - COST
+    # Score components use observed returns over the actual forecast horizon, not a
+    # daily tail quantile multiplied by sqrt(h). These overlapping samples are descriptive.
+    horizon_returns = horizon_log_returns(prices, horizon)
+    if len(horizon_returns) >= 60:
+        lower = quantile(horizon_returns, 0.05)
+        upper = quantile(horizon_returns, 0.95)
+        downside_tail = max(0.0, -lower)
+        uncertainty = (upper - lower) / 2.0
+        score = mu - LAMBDA * downside_tail - GAMMA * uncertainty - COST
+    else:
+        downside_tail = None
+        uncertainty = None
+        score = None
     last = prices[-1]
     origin = datetime.fromisoformat(last["date"]).date()
     target = origin + timedelta(days=horizon)
@@ -158,14 +273,16 @@ def build_forecast(prices, horizon, now_date):
         "origin_price_eur": last["close"],
         "model": "shrunk_trailing_mean_v1",
         "model_version": MODEL_VERSION,
+        "risk_score_version": "empirical_horizon_v1" if score is not None else "unavailable_insufficient_sample",
+        "evaluation_eligible": True,
         "lookback_days": LOOKBACK,
         "shrinkage": SHRINKAGE,
         "predicted_log_return": round(mu, 8),
         "zero_baseline_log_return": 0.0,
-        "downside_tail_proxy": round(downside_tail, 8),
-        "uncertainty_penalty": round(uncertainty, 8),
+        "downside_tail_proxy": round(downside_tail, 8) if downside_tail is not None else None,
+        "uncertainty_penalty": round(uncertainty, 8) if uncertainty is not None else None,
         "assumed_cost": COST,
-        "risk_adjusted_score": round(score, 8),
+        "risk_adjusted_score": round(score, 8) if score is not None else None,
         "status": "pending",
         "realized_log_return": None,
         "realized_date": None,
@@ -173,6 +290,38 @@ def build_forecast(prices, horizon, now_date):
         "matured_at_utc": None,
         "created_at_utc": datetime.now(timezone.utc).isoformat(timespec="seconds")
     }
+
+def annotate_ledger_records(ledger):
+    """Retain legacy records but mark unknown provenance and exclude equivalent duplicates."""
+    records = ledger["forecasts"]
+    changed = False
+    for forecast in records:
+        if "model_version" not in forecast:
+            forecast["model_version"] = "legacy_unknown"
+            forecast["provenance_status"] = "legacy_unknown"
+            changed = True
+        if "evaluation_eligible" not in forecast:
+            forecast["evaluation_eligible"] = True
+            changed = True
+    groups = {}
+    for index, forecast in enumerate(records):
+        key = (
+            forecast.get("origin_date"), forecast.get("target_date"),
+            forecast.get("horizon_days"), forecast.get("model"),
+            forecast.get("origin_price_eur"), forecast.get("predicted_log_return"),
+        )
+        groups.setdefault(key, []).append((index, forecast))
+    for entries in groups.values():
+        if len(entries) < 2:
+            continue
+        # Prefer explicit model-version provenance; never delete or rewrite prediction values.
+        entries.sort(key=lambda pair: pair[1].get("model_version") == "legacy_unknown", reverse=False)
+        for index, forecast in entries[1:]:
+            if forecast.get("evaluation_eligible") is not False:
+                forecast["evaluation_eligible"] = False
+                forecast["evaluation_exclusion_reason"] = "equivalent_forecast_record_retained_for_history_but_excluded_from_metrics"
+                changed = True
+    return changed
 
 def mature_forecasts(ledger, prices):
     """Mature only against the exact target-date close; never silently shift the horizon."""
@@ -201,21 +350,35 @@ def mature_forecasts(ledger, prices):
 def main():
     prices, source = fetch_prices()
     previous_latest = read_json(LATEST, {})
+    previous_ledger = read_json(LEDGER, {"schema_version": 2, "created_note": "Prospective ledger; entries begin on first successful scheduled run.", "forecasts": []})
+    validate_persistent_schemas(previous_latest, previous_ledger)
+    # Validate the incoming series before any persistent artifact is written.
+    dates = [p.get("date") for p in prices]
+    if len(dates) < 100 or dates != sorted(set(dates)):
+        raise RuntimeError("Incoming price series has too few observations, duplicate dates, or non-chronological dates; no data files were written.")
+    for p in prices:
+        if not isinstance(p.get("close"), (int, float)) or not math.isfinite(p["close"]) or p["close"] <= 0:
+            raise RuntimeError(f"Invalid close price on {p.get('date')}; no data files were written.")
+    if not isinstance(previous_ledger.get("forecasts"), list):
+        raise RuntimeError("Forecast ledger has an invalid schema; original file preserved.")
+    if any(not isinstance(f, dict) for f in previous_ledger["forecasts"]):
+        raise RuntimeError("Forecast ledger contains a non-object record; original file preserved.")
     checked_at = datetime.now(timezone.utc).isoformat(timespec="seconds")
     prices_changed = previous_latest.get("prices") != prices or previous_latest.get("source") != source
     latest = {
         "schema_version": 2,
         "source": source,
+        "source_switch_detected": bool(previous_latest.get("source") and previous_latest.get("source") != source),
+        "historical_observation_provenance": "unknown_before_observation_level_tracking",
         "currency": "EUR",
         "last_updated": checked_at if prices_changed or not previous_latest.get("last_updated") else previous_latest["last_updated"],
         "prices": prices,
         "status": "ok"
     }
-    ledger = read_json(LEDGER, {"schema_version": 2, "created_note": "Prospective ledger; entries begin on first successful scheduled run.", "forecasts": []})
-    if not isinstance(ledger.get("forecasts"), list):
-        raise RuntimeError("Forecast ledger has an invalid schema.")
+    ledger = previous_ledger
     previous_schema = int(ledger.get("schema_version", 1))
-    ledger_changed = mature_forecasts(ledger, prices)
+    ledger_changed = annotate_ledger_records(ledger)
+    ledger_changed = mature_forecasts(ledger, prices) or ledger_changed
     # Upgrade the envelope only; existing historical forecast records are preserved as-is.
     ledger["schema_version"] = max(2, previous_schema)
     ledger_changed = ledger_changed or ledger["schema_version"] != previous_schema
@@ -226,7 +389,8 @@ def main():
             ledger["forecasts"].append(f)
             existing.add(f["id"])
             ledger_changed = True
-    ledger["forecasts"].sort(key=lambda f: (f.get("origin_date", ""), f.get("horizon_days", 0)))
+    ledger_changed = annotate_ledger_records(ledger) or ledger_changed
+    ledger["forecasts"].sort(key=lambda f: (f.get("origin_date", ""), f.get("horizon_days", 0), f.get("model_version", "")))
     if ledger_changed or not ledger.get("last_updated"):
         ledger["last_updated"] = checked_at
     write_json(LATEST, latest)
