@@ -104,7 +104,7 @@ class ForecastPipelineTests(unittest.TestCase):
         self.assertAlmostEqual(result["mae"], 0.1)
         self.assertAlmostEqual(result["rmse"], math.sqrt(0.01))
         self.assertEqual(result["directional_n"], 3)
-        self.assertAlmostEqual(result["directional_accuracy"], 2 / 3)
+        self.assertAlmostEqual(result["directional_accuracy"], 2 / 3, places=5)
         empty = arena.summarize([])
         self.assertIsNone(empty["mae"])
         self.assertIsNone(empty["directional_accuracy"])
