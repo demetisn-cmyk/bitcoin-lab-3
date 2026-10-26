@@ -186,6 +186,7 @@ def build_forecast(prices, horizon, now_date):
         "origin_price_eur": last["close"],
         "model": "shrunk_trailing_mean_v1",
         "model_version": MODEL_VERSION,
+        "evaluation_eligible": True,
         "lookback_days": LOOKBACK,
         "shrinkage": SHRINKAGE,
         "predicted_log_return": round(mu, 8),
@@ -201,6 +202,36 @@ def build_forecast(prices, horizon, now_date):
         "matured_at_utc": None,
         "created_at_utc": datetime.now(timezone.utc).isoformat(timespec="seconds")
     }
+
+def annotate_ledger_records(ledger):
+    """Retain legacy records but mark unknown provenance and exclude equivalent duplicates."""
+    records = ledger["forecasts"]
+    changed = False
+    for forecast in records:
+        if "model_version" not in forecast:
+            forecast["model_version"] = "legacy_unknown"
+            forecast["provenance_status"] = "legacy_unknown"
+            changed = True
+        forecast.setdefault("evaluation_eligible", True)
+    groups = {}
+    for index, forecast in enumerate(records):
+        key = (
+            forecast.get("origin_date"), forecast.get("target_date"),
+            forecast.get("horizon_days"), forecast.get("model"),
+            forecast.get("origin_price_eur"), forecast.get("predicted_log_return"),
+        )
+        groups.setdefault(key, []).append((index, forecast))
+    for entries in groups.values():
+        if len(entries) < 2:
+            continue
+        # Prefer explicit model-version provenance; never delete or rewrite prediction values.
+        entries.sort(key=lambda pair: pair[1].get("model_version") == "legacy_unknown", reverse=False)
+        for index, forecast in entries[1:]:
+            if forecast.get("evaluation_eligible") is not False:
+                forecast["evaluation_eligible"] = False
+                forecast["evaluation_exclusion_reason"] = "equivalent_forecast_record_retained_for_history_but_excluded_from_metrics"
+                changed = True
+    return changed
 
 def mature_forecasts(ledger, prices):
     """Mature only against the exact target-date close; never silently shift the horizon."""
@@ -255,7 +286,8 @@ def main():
     }
     ledger = previous_ledger
     previous_schema = int(ledger.get("schema_version", 1))
-    ledger_changed = mature_forecasts(ledger, prices)
+    ledger_changed = annotate_ledger_records(ledger)
+    ledger_changed = mature_forecasts(ledger, prices) or ledger_changed
     # Upgrade the envelope only; existing historical forecast records are preserved as-is.
     ledger["schema_version"] = max(2, previous_schema)
     ledger_changed = ledger_changed or ledger["schema_version"] != previous_schema
@@ -266,7 +298,8 @@ def main():
             ledger["forecasts"].append(f)
             existing.add(f["id"])
             ledger_changed = True
-    ledger["forecasts"].sort(key=lambda f: (f.get("origin_date", ""), f.get("horizon_days", 0)))
+    ledger_changed = annotate_ledger_records(ledger) or ledger_changed
+    ledger["forecasts"].sort(key=lambda f: (f.get("origin_date", ""), f.get("horizon_days", 0), f.get("model_version", "")))
     if ledger_changed or not ledger.get("last_updated"):
         ledger["last_updated"] = checked_at
     write_json(LATEST, latest)
