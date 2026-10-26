@@ -284,5 +284,30 @@ class ForecastPipelineTests(unittest.TestCase):
                 module.validate_persistent_schemas({}, {"forecasts": [{"id": "bad"}]})
             self.assertEqual(path.read_bytes(), original)
 
+
+    def test_horizon_returns_require_exact_consecutive_dates(self):
+        prices = [
+            {"date": "2026-01-01", "close": 100.0},
+            {"date": "2026-01-02", "close": 110.0},
+            {"date": "2026-01-04", "close": 121.0},
+            {"date": "2026-01-05", "close": 120.0},
+            {"date": "2026-01-06", "close": 132.0},
+        ]
+        got = module.horizon_log_returns(prices, 2)
+        self.assertEqual(len(got), 1)
+        self.assertAlmostEqual(got[0], math.log(132.0 / 120.0))
+
+    def test_forecast_score_uses_horizon_matched_method_version(self):
+        prices = []
+        start = date(2025, 1, 1)
+        p = 100.0
+        for i in range(260):
+            p *= 1.001 if i % 3 else 0.998
+            prices.append({"date": (start + timedelta(days=i)).isoformat(), "close": p})
+        forecast = module.build_forecast(prices, 30, start)
+        self.assertEqual(forecast["risk_score_version"], "empirical_horizon_v1")
+        self.assertTrue(math.isfinite(forecast["downside_tail_proxy"]))
+        self.assertTrue(math.isfinite(forecast["uncertainty_penalty"]))
+
 if __name__ == "__main__":
     unittest.main()
