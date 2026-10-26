@@ -35,6 +35,48 @@ def read_json(path, fallback):
         raise RuntimeError(f"Refusing to use {path}: expected a JSON object; original file preserved.")
     return value
 
+def validate_persistent_schemas(latest, ledger):
+    """Reject structurally invalid persisted inputs before generating replacement files."""
+    if latest:
+        prices = latest.get("prices")
+        if not isinstance(prices, list) or not prices:
+            raise RuntimeError("Existing latest.json has an invalid schema; original file preserved.")
+        seen = set()
+        for item in prices:
+            if not isinstance(item, dict):
+                raise RuntimeError("Existing latest.json contains a non-object price; original file preserved.")
+            try:
+                day = datetime.fromisoformat(item["date"]).date().isoformat()
+                close = float(item["close"])
+            except (KeyError, TypeError, ValueError) as exc:
+                raise RuntimeError("Existing latest.json contains an invalid date/close; original file preserved.") from exc
+            if day in seen or not math.isfinite(close) or close <= 0:
+                raise RuntimeError("Existing latest.json contains duplicate dates or invalid closes; original file preserved.")
+            seen.add(day)
+    forecasts = ledger.get("forecasts")
+    if not isinstance(forecasts, list):
+        raise RuntimeError("Forecast ledger has an invalid schema; original file preserved.")
+    for index, forecast in enumerate(forecasts):
+        if not isinstance(forecast, dict):
+            raise RuntimeError(f"Forecast ledger record {index} is not an object; original file preserved.")
+        try:
+            if not isinstance(forecast.get("id"), str) or not forecast["id"]:
+                raise ValueError("missing ID")
+            datetime.fromisoformat(forecast["origin_date"])
+            datetime.fromisoformat(forecast["target_date"])
+            horizon = forecast["horizon_days"]
+            origin_price = float(forecast["origin_price_eur"])
+            predicted = float(forecast["predicted_log_return"])
+            status = forecast["status"]
+            if isinstance(horizon, bool) or not isinstance(horizon, int) or horizon <= 0:
+                raise ValueError("invalid horizon")
+            if not math.isfinite(origin_price) or origin_price <= 0 or not math.isfinite(predicted):
+                raise ValueError("invalid price or prediction")
+            if status not in ("pending", "matured"):
+                raise ValueError("invalid status")
+        except (KeyError, TypeError, ValueError) as exc:
+            raise RuntimeError(f"Forecast ledger record {index} has an invalid schema ({exc}); original file preserved.") from exc
+
 def write_json(path, obj):
     """Atomically replace a JSON artifact and skip byte-identical writes."""
     path.parent.mkdir(parents=True, exist_ok=True)
@@ -263,6 +305,7 @@ def main():
     prices, source = fetch_prices()
     previous_latest = read_json(LATEST, {})
     previous_ledger = read_json(LEDGER, {"schema_version": 2, "created_note": "Prospective ledger; entries begin on first successful scheduled run.", "forecasts": []})
+    validate_persistent_schemas(previous_latest, previous_ledger)
     # Validate the incoming series before any persistent artifact is written.
     dates = [p.get("date") for p in prices]
     if len(dates) < 100 or dates != sorted(set(dates)):
