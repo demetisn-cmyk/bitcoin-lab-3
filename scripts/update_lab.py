@@ -205,17 +205,51 @@ def quantile(values, q):
         return vals[lo]
     return vals[lo] * (hi - pos) + vals[hi] * (pos - lo)
 
+def horizon_log_returns(prices, horizon):
+    """Historical horizon-matched log returns; each window must be calendar-consecutive."""
+    out = []
+    if horizon <= 0:
+        return out
+    for start in range(0, len(prices) - horizon):
+        segment = prices[start:start + horizon + 1]
+        if len(segment) != horizon + 1:
+            continue
+        try:
+            start_day = datetime.fromisoformat(segment[0]["date"]).date()
+            end_day = datetime.fromisoformat(segment[-1]["date"]).date()
+            if (end_day - start_day).days != horizon:
+                continue
+            if any((datetime.fromisoformat(b["date"]).date() -
+                    datetime.fromisoformat(a["date"]).date()).days != 1
+                   for a, b in zip(segment, segment[1:])):
+                continue
+            start_close, end_close = float(segment[0]["close"]), float(segment[-1]["close"])
+            if start_close > 0 and end_close > 0 and math.isfinite(start_close) and math.isfinite(end_close):
+                out.append(math.log(end_close / start_close))
+        except (KeyError, TypeError, ValueError):
+            continue
+    return out
+
 def build_forecast(prices, horizon, now_date):
     rets = log_returns(prices)
     window = [r for _, r in rets[-LOOKBACK:]]
     if len(window) < 60:
         raise RuntimeError("At least 60 daily returns are required before forecasting.")
     daily_mean = statistics.fmean(window)
-    daily_vol = statistics.pstdev(window)
     mu = daily_mean * horizon * SHRINKAGE
-    downside_tail = max(0.0, -quantile(window, 0.05)) * math.sqrt(horizon)
-    uncertainty = 1.645 * daily_vol * math.sqrt(horizon)
-    score = mu - LAMBDA * downside_tail - GAMMA * uncertainty - COST
+    # Score components use observed returns over the actual forecast horizon, not a
+    # daily tail quantile multiplied by sqrt(h). These overlapping samples are descriptive.
+    horizon_returns = horizon_log_returns(prices, horizon)
+    if len(horizon_returns) >= 60:
+        lower = quantile(horizon_returns, 0.05)
+        upper = quantile(horizon_returns, 0.95)
+        downside_tail = max(0.0, -lower)
+        uncertainty = (upper - lower) / 2.0
+        score = mu - LAMBDA * downside_tail - GAMMA * uncertainty - COST
+    else:
+        downside_tail = None
+        uncertainty = None
+        score = None
     last = prices[-1]
     origin = datetime.fromisoformat(last["date"]).date()
     target = origin + timedelta(days=horizon)
@@ -228,15 +262,16 @@ def build_forecast(prices, horizon, now_date):
         "origin_price_eur": last["close"],
         "model": "shrunk_trailing_mean_v1",
         "model_version": MODEL_VERSION,
+        "risk_score_version": "empirical_horizon_v1" if score is not None else "unavailable_insufficient_sample",
         "evaluation_eligible": True,
         "lookback_days": LOOKBACK,
         "shrinkage": SHRINKAGE,
         "predicted_log_return": round(mu, 8),
         "zero_baseline_log_return": 0.0,
-        "downside_tail_proxy": round(downside_tail, 8),
-        "uncertainty_penalty": round(uncertainty, 8),
+        "downside_tail_proxy": round(downside_tail, 8) if downside_tail is not None else None,
+        "uncertainty_penalty": round(uncertainty, 8) if uncertainty is not None else None,
         "assumed_cost": COST,
-        "risk_adjusted_score": round(score, 8),
+        "risk_adjusted_score": round(score, 8) if score is not None else None,
         "status": "pending",
         "realized_log_return": None,
         "realized_date": None,
