@@ -200,27 +200,35 @@ def mature_forecasts(ledger, prices):
 
 def main():
     prices, source = fetch_prices()
+    previous_latest = read_json(LATEST, {})
+    checked_at = datetime.now(timezone.utc).isoformat(timespec="seconds")
+    prices_changed = previous_latest.get("prices") != prices or previous_latest.get("source") != source
     latest = {
         "schema_version": 2,
         "source": source,
         "currency": "EUR",
-        "last_updated": datetime.now(timezone.utc).isoformat(timespec="seconds"),
+        "last_updated": checked_at if prices_changed or not previous_latest.get("last_updated") else previous_latest["last_updated"],
         "prices": prices,
         "status": "ok"
     }
     ledger = read_json(LEDGER, {"schema_version": 2, "created_note": "Prospective ledger; entries begin on first successful scheduled run.", "forecasts": []})
     if not isinstance(ledger.get("forecasts"), list):
         raise RuntimeError("Forecast ledger has an invalid schema.")
-    mature_forecasts(ledger, prices)
+    previous_schema = int(ledger.get("schema_version", 1))
+    ledger_changed = mature_forecasts(ledger, prices)
     # Upgrade the envelope only; existing historical forecast records are preserved as-is.
-    ledger["schema_version"] = max(2, int(ledger.get("schema_version", 1)))
+    ledger["schema_version"] = max(2, previous_schema)
+    ledger_changed = ledger_changed or ledger["schema_version"] != previous_schema
     existing = {f.get("id") for f in ledger["forecasts"]}
     for horizon in HORIZONS:
         f = build_forecast(prices, horizon, datetime.now(timezone.utc).date())
         if f["id"] not in existing:
             ledger["forecasts"].append(f)
+            existing.add(f["id"])
+            ledger_changed = True
     ledger["forecasts"].sort(key=lambda f: (f.get("origin_date", ""), f.get("horizon_days", 0)))
-    ledger["last_updated"] = latest["last_updated"]
+    if ledger_changed or not ledger.get("last_updated"):
+        ledger["last_updated"] = checked_at
     write_json(LATEST, latest)
     write_json(LEDGER, ledger)
     matured = sum(f.get("status") == "matured" for f in ledger["forecasts"])
