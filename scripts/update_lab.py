@@ -22,16 +22,35 @@ COST = 0.005
 MODEL_VERSION = "1.0"
 
 def read_json(path, fallback):
+    """Read JSON without ever treating corruption as an empty persistent record."""
     try:
-        return json.loads(path.read_text(encoding="utf-8"))
-    except (FileNotFoundError, json.JSONDecodeError):
+        raw = path.read_text(encoding="utf-8")
+    except FileNotFoundError:
         return fallback
+    try:
+        value = json.loads(raw)
+    except json.JSONDecodeError as exc:
+        raise RuntimeError(f"Refusing to overwrite malformed JSON at {path} (line {exc.lineno}, column {exc.colno}). Original file preserved.") from exc
+    if not isinstance(value, dict):
+        raise RuntimeError(f"Refusing to use {path}: expected a JSON object; original file preserved.")
+    return value
 
 def write_json(path, obj):
+    """Atomically replace a JSON artifact and skip byte-identical writes."""
     path.parent.mkdir(parents=True, exist_ok=True)
+    content = json.dumps(obj, ensure_ascii=False, indent=2) + "\n"
+    try:
+        if path.read_text(encoding="utf-8") == content:
+            return False
+    except FileNotFoundError:
+        pass
     tmp = path.with_suffix(path.suffix + ".tmp")
-    tmp.write_text(json.dumps(obj, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    with tmp.open("w", encoding="utf-8", newline="\n") as handle:
+        handle.write(content)
+        handle.flush()
+        os.fsync(handle.fileno())
     tmp.replace(path)
+    return True
 
 def request_json(url, headers=None):
     req = Request(url, headers=headers or {})
@@ -119,10 +138,19 @@ def fetch_prices():
     raise RuntimeError("All market-data providers failed. " + " | ".join(errors))
 
 def log_returns(prices):
+    """Return only true one-calendar-day log returns; gaps are never mislabeled daily."""
     out = []
     for prev, cur in zip(prices, prices[1:]):
-        if prev["close"] > 0 and cur["close"] > 0:
-            out.append((cur["date"], math.log(cur["close"] / prev["close"])))
+        try:
+            prev_day = datetime.fromisoformat(prev["date"]).date()
+            cur_day = datetime.fromisoformat(cur["date"]).date()
+            prev_close, cur_close = float(prev["close"]), float(cur["close"])
+        except (KeyError, TypeError, ValueError):
+            continue
+        if (cur_day - prev_day).days != 1:
+            continue
+        if math.isfinite(prev_close) and math.isfinite(cur_close) and prev_close > 0 and cur_close > 0:
+            out.append((cur["date"], math.log(cur_close / prev_close)))
     return out
 
 def quantile(values, q):
@@ -201,19 +229,31 @@ def mature_forecasts(ledger, prices):
 def main():
     prices, source = fetch_prices()
     previous_latest = read_json(LATEST, {})
+    previous_ledger = read_json(LEDGER, {"schema_version": 2, "created_note": "Prospective ledger; entries begin on first successful scheduled run.", "forecasts": []})
+    # Validate the incoming series before any persistent artifact is written.
+    dates = [p.get("date") for p in prices]
+    if len(dates) < 100 or dates != sorted(set(dates)):
+        raise RuntimeError("Incoming price series has too few observations, duplicate dates, or non-chronological dates; no data files were written.")
+    for p in prices:
+        if not isinstance(p.get("close"), (int, float)) or not math.isfinite(p["close"]) or p["close"] <= 0:
+            raise RuntimeError(f"Invalid close price on {p.get('date')}; no data files were written.")
+    if not isinstance(previous_ledger.get("forecasts"), list):
+        raise RuntimeError("Forecast ledger has an invalid schema; original file preserved.")
+    if any(not isinstance(f, dict) for f in previous_ledger["forecasts"]):
+        raise RuntimeError("Forecast ledger contains a non-object record; original file preserved.")
     checked_at = datetime.now(timezone.utc).isoformat(timespec="seconds")
     prices_changed = previous_latest.get("prices") != prices or previous_latest.get("source") != source
     latest = {
         "schema_version": 2,
         "source": source,
+        "source_switch_detected": bool(previous_latest.get("source") and previous_latest.get("source") != source),
+        "historical_observation_provenance": "unknown_before_observation_level_tracking",
         "currency": "EUR",
         "last_updated": checked_at if prices_changed or not previous_latest.get("last_updated") else previous_latest["last_updated"],
         "prices": prices,
         "status": "ok"
     }
-    ledger = read_json(LEDGER, {"schema_version": 2, "created_note": "Prospective ledger; entries begin on first successful scheduled run.", "forecasts": []})
-    if not isinstance(ledger.get("forecasts"), list):
-        raise RuntimeError("Forecast ledger has an invalid schema.")
+    ledger = previous_ledger
     previous_schema = int(ledger.get("schema_version", 1))
     ledger_changed = mature_forecasts(ledger, prices)
     # Upgrade the envelope only; existing historical forecast records are preserved as-is.
