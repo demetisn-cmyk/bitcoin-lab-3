@@ -136,7 +136,7 @@ def inspect_artifacts(latest: dict, ledger: dict, today: date | None = None) -> 
     return {
         "schema_version": 1,
         "status": "fail" if failures else ("warn" if warnings else "ok"),
-        "generated_at_utc": latest.get("last_updated") or datetime.now(timezone.utc).isoformat(timespec="seconds"),
+        "generated_at_utc": datetime.now(timezone.utc).isoformat(timespec="seconds"),
         "data_date": ordered[-1][0].isoformat() if ordered else None,
         "source": source,
         "historical_observation_provenance": latest.get("historical_observation_provenance", "unknown"),
