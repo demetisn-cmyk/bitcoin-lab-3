@@ -62,39 +62,49 @@ def summarize(pairs):
             "zero_baseline_rmse": round(zero_rmse, 10),
             "skill_vs_zero_mae": round(skill, 6) if skill is not None else None}
 
+def predict_at_origin(prices, origin_index, horizon, lookback=LOOKBACK):
+    """Return predictions and realized outcome; prediction inputs stop at origin_index."""
+    if origin_index < lookback or origin_index >= len(prices):
+        return None
+    origin = prices[origin_index]
+    target_date = datetime.fromisoformat(origin["date"]).date()
+    target = (target_date.fromordinal(target_date.toordinal() + horizon)).isoformat()
+    by_date = {p["date"]: (i, p) for i, p in enumerate(prices)}
+    target_item = by_date.get(target)
+    if not target_item:
+        return None
+    target_i, target_price = target_item
+    if target_i != origin_index + horizon:
+        return None
+    returns = [math.log(prices[j]["close"] / prices[j-1]["close"])
+               for j in range(origin_index-lookback+1, origin_index+1)]
+    if len(returns) != lookback:
+        return None
+    mean_window = statistics.fmean(returns)
+    mean_momentum = statistics.fmean(returns[-30:])
+    predictions = {
+        "zero_return_v1": 0.0,
+        "historical_mean_180_v1": mean_window * horizon,
+        "shrunk_trailing_mean_v1.0": mean_window * horizon * SHRINKAGE,
+        "momentum_30_v1": mean_momentum * horizon * SHRINKAGE,
+    }
+    realized = math.log(target_price["close"] / origin["close"])
+    return predictions, realized, target
+
 def run_walk_forward(prices, horizons=(30, 90), lookback=LOOKBACK):
     """At origin i, predictions only use closes <= i; target is exactly i+h calendar days."""
-    by_date = {p["date"]: (i, p) for i, p in enumerate(prices)}
     records = {h: {name: [] for name in MODEL_VERSIONS} for h in horizons}
     nonoverlap = {h: {name: [] for name in MODEL_VERSIONS} for h in horizons}
     origins = {h: [] for h in horizons}
     for i in range(lookback, len(prices)):
-        origin = prices[i]
-        target_date = (datetime.fromisoformat(origin["date"]).date())
         for h in horizons:
-            target = (target_date.fromordinal(target_date.toordinal() + h)).isoformat()
-            target_item = by_date.get(target)
-            if not target_item:
+            forecast = predict_at_origin(prices, i, h, lookback)
+            if forecast is None:
                 continue
-            target_i, target_price = target_item
-            if target_i <= i:
-                continue
-            returns = [math.log(prices[j]["close"] / prices[j-1]["close"])
-                       for j in range(i-lookback+1, i+1)]
-            if len(returns) != lookback:
-                continue
-            mean180 = statistics.fmean(returns)
-            mean30 = statistics.fmean(returns[-30:])
-            actual = math.log(target_price["close"] / origin["close"])
-            predictions = {
-                "zero_return_v1": 0.0,
-                "historical_mean_180_v1": mean180 * h,
-                "shrunk_trailing_mean_v1.0": mean180 * h * SHRINKAGE,
-                "momentum_30_v1": mean30 * h * SHRINKAGE,
-            }
+            predictions, actual, target = forecast
             for name, pred in predictions.items():
                 records[h][name].append((pred, actual))
-            origins[h].append({"origin_index": i, "origin_date": origin["date"], "target_date": target})
+            origins[h].append({"origin_index": i, "origin_date": prices[i]["date"], "target_date": target})
     results = {}
     for h in horizons:
         # Use a fixed step of h days from the first eligible origin to reduce overlap.
