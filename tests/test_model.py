@@ -309,5 +309,17 @@ class ForecastPipelineTests(unittest.TestCase):
         self.assertTrue(math.isfinite(forecast["downside_tail_proxy"]))
         self.assertTrue(math.isfinite(forecast["uncertainty_penalty"]))
 
+
+    def test_live_forecast_refuses_gap_in_trailing_daily_window(self):
+        prices = []
+        start = date(2025, 1, 1)
+        p = 100.0
+        for i in range(220):
+            day = start + timedelta(days=i + (1 if i >= 200 else 0))
+            p *= 1.001
+            prices.append({"date": day.isoformat(), "close": p})
+        with self.assertRaisesRegex(RuntimeError, "gap"):
+            module.build_forecast(prices, 30, start)
+
 if __name__ == "__main__":
     unittest.main()
