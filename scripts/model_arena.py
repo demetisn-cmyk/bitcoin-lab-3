@@ -160,6 +160,18 @@ def classify_regime(prices, origin_index):
     return trend + "_" + volatility + "_volatility"
 
 
+def select_nonoverlap_origin_dates(origins, horizon):
+    """Greedily select sorted origins separated by at least horizon calendar days."""
+    selected = set()
+    last_selected = None
+    for item in origins:
+        current = date.fromisoformat(item["origin_date"])
+        if last_selected is None or (current - last_selected).days >= horizon:
+            selected.add(item["origin_date"])
+            last_selected = current
+    return selected
+
+
 def run_walk_forward(prices, horizons=(30, 90), lookback=LOOKBACK):
     records = {h: {name: [] for name in MODEL_VERSIONS} for h in horizons}
     nonoverlap = {h: {name: [] for name in MODEL_VERSIONS} for h in horizons}
@@ -193,13 +205,7 @@ def run_walk_forward(prices, horizons=(30, 90), lookback=LOOKBACK):
     results = {}
     for h in horizons:
         # Use actual origin dates, not every h-th row, to handle missing/invalid observations safely.
-        selected_dates = set()
-        last_selected = None
-        for item in origins[h]:
-            current = date.fromisoformat(item["origin_date"])
-            if last_selected is None or (current - last_selected).days >= h:
-                selected_dates.add(item["origin_date"])
-                last_selected = current
+        selected_dates = select_nonoverlap_origin_dates(origins[h], h)
         origin_dates = [x["origin_date"] for x in origins[h]]
         for name in MODEL_VERSIONS:
             nonoverlap[h][name] = [
