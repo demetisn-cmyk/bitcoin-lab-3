@@ -19,6 +19,7 @@ SHRINKAGE = 0.35
 LAMBDA = 1.0
 GAMMA = 0.5
 COST = 0.005
+MODEL_VERSION = "1.0"
 
 def read_json(path, fallback):
     try:
@@ -149,12 +150,14 @@ def build_forecast(prices, horizon, now_date):
     origin = datetime.fromisoformat(last["date"]).date()
     target = origin + timedelta(days=horizon)
     return {
-        "id": f"{last['date']}-{horizon}d",
+        "id": f"{last['date']}-{horizon}d-shrunk_trailing_mean_v{MODEL_VERSION}",
         "origin_date": last["date"],
+        "data_cutoff_date": last["date"],
         "target_date": target.isoformat(),
         "horizon_days": horizon,
         "origin_price_eur": last["close"],
         "model": "shrunk_trailing_mean_v1",
+        "model_version": MODEL_VERSION,
         "lookback_days": LOOKBACK,
         "shrinkage": SHRINKAGE,
         "predicted_log_return": round(mu, 8),
@@ -167,41 +170,50 @@ def build_forecast(prices, horizon, now_date):
         "realized_log_return": None,
         "realized_date": None,
         "realized_price_eur": None,
+        "matured_at_utc": None,
         "created_at_utc": datetime.now(timezone.utc).isoformat(timespec="seconds")
     }
 
 def mature_forecasts(ledger, prices):
+    """Mature only against the exact target-date close; never silently shift the horizon."""
     by_date = {p["date"]: p for p in prices}
-    dates = [p["date"] for p in prices]
     changed = False
     for f in ledger["forecasts"]:
         if f.get("status") != "pending":
             continue
         target = f.get("target_date")
-        target_end = (datetime.fromisoformat(target).date() + timedelta(days=3)).isoformat()
-        match = next((d for d in dates if target <= d <= target_end), None)
-        if match and f.get("origin_price_eur", 0) > 0:
-            f["realized_date"] = match
-            f["realized_price_eur"] = by_date[match]["close"]
-            f["realized_log_return"] = round(math.log(by_date[match]["close"] / f["origin_price_eur"]), 8)
-            f["status"] = "matured"
-            changed = True
+        if not isinstance(target, str) or target not in by_date:
+            continue
+        origin_price = f.get("origin_price_eur")
+        target_price = by_date[target].get("close")
+        if (not isinstance(origin_price, (int, float)) or not math.isfinite(origin_price)
+                or origin_price <= 0 or not isinstance(target_price, (int, float))
+                or not math.isfinite(target_price) or target_price <= 0):
+            continue
+        f["realized_date"] = target
+        f["realized_price_eur"] = target_price
+        f["realized_log_return"] = round(math.log(target_price / origin_price), 8)
+        f["status"] = "matured"
+        f["matured_at_utc"] = datetime.now(timezone.utc).isoformat(timespec="seconds")
+        changed = True
     return changed
 
 def main():
     prices, source = fetch_prices()
     latest = {
-        "schema_version": 1,
+        "schema_version": 2,
         "source": source,
         "currency": "EUR",
         "last_updated": datetime.now(timezone.utc).isoformat(timespec="seconds"),
         "prices": prices,
         "status": "ok"
     }
-    ledger = read_json(LEDGER, {"schema_version": 1, "created_note": "Prospective ledger; entries begin on first successful scheduled run.", "forecasts": []})
+    ledger = read_json(LEDGER, {"schema_version": 2, "created_note": "Prospective ledger; entries begin on first successful scheduled run.", "forecasts": []})
     if not isinstance(ledger.get("forecasts"), list):
         raise RuntimeError("Forecast ledger has an invalid schema.")
     mature_forecasts(ledger, prices)
+    # Upgrade the envelope only; existing historical forecast records are preserved as-is.
+    ledger["schema_version"] = max(2, int(ledger.get("schema_version", 1)))
     existing = {f.get("id") for f in ledger["forecasts"]}
     for horizon in HORIZONS:
         f = build_forecast(prices, horizon, datetime.now(timezone.utc).date())
