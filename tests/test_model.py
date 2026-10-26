@@ -246,5 +246,22 @@ class ForecastPipelineTests(unittest.TestCase):
             self.assertFalse(module.write_json(path, {"ok": True}))
             self.assertEqual(path.stat().st_mtime_ns, before)
 
+
+    def test_legacy_duplicate_is_preserved_but_excluded_from_metrics(self):
+        legacy = {"id": "2026-01-01-30d", "origin_date": "2026-01-01",
+                  "target_date": "2026-01-31", "horizon_days": 30,
+                  "origin_price_eur": 100.0, "model": "shrunk_trailing_mean_v1",
+                  "predicted_log_return": 0.02, "status": "matured",
+                  "realized_log_return": 0.01}
+        versioned = dict(legacy, id="2026-01-01-30d-shrunk-v1", model_version="1.0")
+        ledger = {"forecasts": [legacy, versioned]}
+        self.assertTrue(module.annotate_ledger_records(ledger))
+        self.assertEqual(len(ledger["forecasts"]), 2)
+        self.assertEqual(ledger["forecasts"][0]["model_version"], "legacy_unknown")
+        self.assertFalse(ledger["forecasts"][0]["evaluation_eligible"])
+        self.assertTrue(ledger["forecasts"][1]["evaluation_eligible"])
+        self.assertEqual(ledger["forecasts"][0]["evaluation_exclusion_reason"],
+                         "equivalent_forecast_record_retained_for_history_but_excluded_from_metrics")
+
 if __name__ == "__main__":
     unittest.main()
