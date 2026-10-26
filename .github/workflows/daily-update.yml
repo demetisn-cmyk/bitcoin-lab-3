@@ -2,6 +2,8 @@ name: Bitcoin Lab daily update
 
 on:
   workflow_dispatch:
+  pull_request:
+    branches: [main]
   push:
     branches: [main]
     paths:
@@ -49,13 +51,15 @@ jobs:
         env:
           COINGECKO_DEMO_API_KEY: ${{ secrets.COINGECKO_DEMO_API_KEY }}
         run: python scripts/update_lab.py
+      - name: Run data-quality sentinel
+        run: python scripts/research_sentinel.py
       - name: Build walk-forward model arena
         run: python scripts/model_arena.py
       - name: Commit updated research data
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add data/latest.json data/forecasts.json data/model_arena.json
+          git add data/latest.json data/forecasts.json data/model_arena.json data/quality_report.json
           if git diff --cached --quiet; then
             echo "No data changes to commit."
           else
