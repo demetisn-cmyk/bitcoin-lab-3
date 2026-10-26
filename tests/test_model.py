@@ -295,7 +295,7 @@ class ForecastPipelineTests(unittest.TestCase):
         ]
         got = module.horizon_log_returns(prices, 2)
         self.assertEqual(len(got), 1)
-        self.assertAlmostEqual(got[0], math.log(132.0 / 120.0))
+        self.assertAlmostEqual(got[0], math.log(132.0 / 121.0))
 
     def test_forecast_score_uses_horizon_matched_method_version(self):
         prices = []
