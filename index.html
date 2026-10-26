@@ -8,6 +8,56 @@
 <style>
 :root{color-scheme:dark;--bg:#080d19;--panel:#111a2c;--panel2:#0d1525;--line:#263550;--text:#eaf0ff;--muted:#91a0bd;--cyan:#69e0d0;--blue:#86a8ff;--amber:#ffc66d;--red:#ff8e9b;--green:#82e6b4;--radius:18px}
 *{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 15% -15%,#1a3152 0,transparent 40%),var(--bg);color:var(--text);font:15px/1.55 Inter,ui-sans-serif,system-ui,-apple-system,Segoe UI,sans-serif}a{color:var(--cyan)}button,select,input{font:inherit;color:inherit;background:#121e32;border:1px solid var(--line);border-radius:10px;padding:9px 11px}button{cursor:pointer}button:hover{border-color:var(--cyan)}button:focus-visible,select:focus-visible,input:focus-visible{outline:2px solid var(--cyan);outline-offset:2px}.wrap{max-width:1480px;margin:auto;padding:28px 20px 60px}.top{display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap;margin-bottom:22px}.brand{display:flex;align-items:center;gap:12px}.mark{width:44px;height:44px;display:grid;place-items:center;border-radius:14px;background:linear-gradient(135deg,#63e3d1,#8faaff);color:#07121c;font-size:23px;font-weight:900}.eyebrow{font-size:11px;text-transform:uppercase;letter-spacing:.18em;color:var(--cyan);font-weight:800}.brand h1{font-size:23px;margin:0;letter-spacing:-.04em}.sub{color:var(--muted);font-size:13px}.status{display:inline-flex;align-items:center;gap:8px;padding:7px 11px;border:1px solid var(--line);border-radius:999px;background:#0d1627;font-size:12px;color:var(--muted)}.dot{width:7px;height:7px;border-radius:50%;background:var(--amber)}.hero{display:grid;grid-template-columns:1.6fr 1fr;gap:16px}.panel{background:linear-gradient(145deg,rgba(20,31,52,.97),rgba(12,20,35,.97));border:1px solid var(--line);border-radius:var(--radius);padding:20px;min-width:0;box-shadow:0 18px 55px #00000015}.hero-price{font-size:clamp(40px,5.4vw,64px);font-weight:800;letter-spacing:-.055em;line-height:1.2;margin:8px 0}.meta{display:flex;gap:18px;flex-wrap:wrap;color:var(--muted);font-size:12px}.meta b{color:var(--text);font-weight:650}.panel-head{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;margin-bottom:16px}.panel h2{font-size:16px;margin:0;letter-spacing:-.02em}.panel h3{font-size:13px;margin:0;color:var(--muted);font-weight:650}.chip{font-size:11px;padding:4px 8px;border-radius:7px;background:#142c35;color:var(--cyan);white-space:nowrap}.grid4{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin:16px 0}.metric{background:#0b1424;border:1px solid var(--line);border-radius:14px;padding:15px;min-width:0}.metric .label{color:var(--muted);font-size:12px}.metric .value{font-size:23px;font-weight:750;letter-spacing:-.04em;margin:8px 0 3px;overflow-wrap:anywhere}.metric .note{color:var(--muted);font-size:11px}.layout{display:grid;grid-template-columns:1.35fr 1fr;gap:16px;margin-top:16px}.controls{display:flex;align-items:center;gap:9px;flex-wrap:wrap}.controls label{display:flex;align-items:center;gap:6px;color:var(--muted);font-size:12px}.controls input{width:82px}.chartbox{height:380px;position:relative}canvas{width:100%;height:100%;display:block}.legend{display:flex;gap:16px;flex-wrap:wrap;color:var(--muted);font-size:11px;margin-top:8px}.legend span:before{content:"";display:inline-block;width:9px;height:9px;border-radius:3px;background:var(--cyan);margin-right:6px}.legend span:nth-child(2):before{background:var(--blue)}.forecast-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.forecast{background:#0b1424;border:1px solid var(--line);border-radius:14px;padding:15px}.forecast .days{font-size:12px;color:var(--muted)}.forecast .return{font-size:25px;font-weight:800;letter-spacing:-.04em;margin:8px 0}.forecast .small{font-size:11px;color:var(--muted)}.signal{display:inline-block;font-size:11px;border-radius:6px;padding:3px 7px;margin-top:8px}.signal.pos{background:#17372f;color:var(--green)}.signal.neg{background:#3b202b;color:var(--red)}.signal.neutral{background:#2a2c36;color:var(--amber)}.tablewrap{overflow:auto}table{width:100%;border-collapse:collapse;font-size:12px;white-space:nowrap}th,td{text-align:left;padding:11px 9px;border-bottom:1px solid #202d43}th{color:var(--muted);font-weight:600}td{color:#d9e3f7}.empty{text-align:center;color:var(--muted);padding:22px}.foot{margin-top:18px;display:grid;grid-template-columns:1fr 1fr;gap:12px}.notice{padding:14px 16px;border-radius:13px;border:1px solid #4a3b29;background:#241d14;color:#e9cf9f;font-size:12px}.note-box{padding:14px 16px;border:1px solid var(--line);border-radius:13px;color:var(--muted);font-size:12px}.section-title{margin:25px 0 12px;display:flex;justify-content:space-between;align-items:end;gap:12px}.section-title h2{margin:0;font-size:18px}.section-title p{margin:3px 0 0;color:var(--muted);font-size:12px}.actions{display:flex;gap:8px;flex-wrap:wrap}.primary{background:linear-gradient(135deg,#68ddcf,#a2b8ff);color:#081320;border:0;font-weight:800}.fineprint{font-size:11px;color:var(--muted);margin-top:28px;max-width:900px}.error{color:var(--red)}@media(max-width:850px){.chartbox{height:300px}.hero,.layout{grid-template-columns:1fr}.grid4{grid-template-columns:repeat(2,minmax(0,1fr))}.foot{grid-template-columns:1fr}}@media(max-width:460px){.wrap{padding:18px 12px 40px}.panel{padding:15px}.grid4{gap:8px}.metric{padding:11px}.metric .value{font-size:20px}.forecast-grid{grid-template-columns:1fr 1fr}.forecast{padding:11px}.forecast .return{font-size:21px}.brand h1{font-size:20px}}
+
+/* 4.1 visual refresh: editorial typography, navigation rail, depth and motion */
+:root{--bg:#070b14;--panel:#101827;--panel2:#0c1321;--line:#26364b;--text:#edf4ff;--muted:#91a3ba;--cyan:#72f0d1;--blue:#9cafff;--violet:#c4a7ff;--amber:#ffd28b;--radius:20px;--shadow:0 24px 70px rgba(0,0,0,.24)}
+html{scroll-behavior:smooth;scroll-padding-top:112px}
+body{background:radial-gradient(ellipse at 4% 0%,rgba(65,123,154,.18),transparent 34%),radial-gradient(ellipse at 95% 18%,rgba(105,78,171,.12),transparent 29%),var(--bg);letter-spacing:.005em}
+body:before{content:"";position:fixed;inset:0;pointer-events:none;z-index:-1;opacity:.14;background-image:radial-gradient(rgba(180,205,235,.42) .65px,transparent .65px);background-size:22px 22px;mask-image:linear-gradient(to bottom,black,transparent 78%)}
+.wrap{max-width:1540px;padding-top:24px}
+.top{padding:8px 2px 22px;margin-bottom:8px}
+.mark{border-radius:16px;box-shadow:0 0 36px rgba(114,240,209,.17);position:relative;overflow:hidden}
+.mark:after{content:"";position:absolute;inset:-60%;background:linear-gradient(115deg,transparent 40%,rgba(255,255,255,.45),transparent 60%);transform:translateX(-80%);animation:mark-glint 8s ease-in-out infinite}
+.brand h1{font-size:clamp(22px,2vw,29px);letter-spacing:-.055em}
+.eyebrow{letter-spacing:.2em}
+.panel{background:linear-gradient(145deg,rgba(18,29,48,.94),rgba(10,17,30,.97));border-color:rgba(125,158,194,.2);box-shadow:var(--shadow);transition:transform .22s ease,border-color .22s ease,box-shadow .22s ease}
+.panel:hover{border-color:rgba(114,240,209,.31);box-shadow:0 28px 78px rgba(0,0,0,.29)}
+.hero>.panel:first-child{position:relative;overflow:hidden}
+.hero>.panel:first-child:after{content:"";position:absolute;width:240px;height:240px;right:-100px;top:-130px;border-radius:50%;border:1px solid rgba(114,240,209,.15);box-shadow:0 0 0 24px rgba(114,240,209,.025),0 0 0 48px rgba(114,240,209,.018);pointer-events:none}
+.hero-price{font-variant-numeric:tabular-nums;letter-spacing:-.07em}
+.metric,.forecast{background:linear-gradient(145deg,rgba(11,21,36,.95),rgba(9,16,28,.96));border-color:rgba(125,158,194,.16);transition:transform .2s ease,border-color .2s ease}
+.metric:hover,.forecast:hover{transform:translateY(-2px);border-color:rgba(114,240,209,.35)}
+.metric .value,.forecast .return{font-variant-numeric:tabular-nums}
+.chip{border:1px solid rgba(114,240,209,.14);letter-spacing:.06em}
+.status{background:rgba(10,18,31,.82);backdrop-filter:blur(12px)}
+button,select,input{transition:border-color .18s ease,background .18s ease,transform .18s ease}
+button:hover{transform:translateY(-1px);background:#18283b}
+.primary{box-shadow:0 8px 26px rgba(105,224,208,.13)}
+.section-title{scroll-margin-top:110px}
+.tablewrap{border:1px solid rgba(125,158,194,.14);border-radius:12px}
+th{background:rgba(17,29,47,.9);position:sticky;top:0}
+tbody tr{transition:background .15s ease}
+tbody tr:hover{background:rgba(114,240,209,.045)}
+/* Navigation is intentionally plain links: keyboard-friendly and mobile-scrollable. */
+.nav-shell{position:sticky;top:10px;z-index:20;margin:0 0 22px;padding:7px;border:1px solid rgba(129,159,194,.2);border-radius:16px;background:rgba(8,14,25,.82);backdrop-filter:blur(18px);box-shadow:0 12px 40px rgba(0,0,0,.22)}
+.navbar{display:flex;align-items:center;gap:5px;overflow-x:auto;scrollbar-width:none}
+.navbar::-webkit-scrollbar{display:none}
+.nav-label{flex:0 0 auto;padding:0 11px;color:var(--muted);font-size:10px;font-weight:800;letter-spacing:.16em;text-transform:uppercase}
+.nav-link{flex:0 0 auto;display:inline-flex;align-items:center;gap:7px;padding:9px 12px;border:1px solid transparent;border-radius:10px;color:#aebbd0;text-decoration:none;font-size:12px;font-weight:650;white-space:nowrap;transition:color .18s ease,background .18s ease,border-color .18s ease}
+.nav-link .nav-index{color:#64758e;font-size:10px;font-variant-numeric:tabular-nums}
+.nav-link:hover{color:var(--text);background:rgba(255,255,255,.045)}
+.nav-link.active{color:var(--cyan);background:rgba(114,240,209,.09);border-color:rgba(114,240,209,.2)}
+.nav-link.active .nav-index{color:var(--cyan)}
+.progress-track{height:2px;position:absolute;left:12px;right:12px;bottom:0;background:rgba(255,255,255,.035);overflow:hidden;border-radius:2px}
+.progress-bar{height:100%;width:0;background:linear-gradient(90deg,var(--cyan),var(--blue),var(--violet));box-shadow:0 0 12px rgba(114,240,209,.45);transition:width .08s linear}
+.section-kicker{display:flex;align-items:center;gap:9px;color:var(--cyan);font-size:10px;font-weight:800;letter-spacing:.18em;text-transform:uppercase;margin-bottom:9px}
+.section-kicker:before{content:"";width:18px;height:1px;background:currentColor}
+.back-top{position:fixed;right:22px;bottom:22px;z-index:25;width:42px;height:42px;border-radius:14px;background:rgba(12,21,35,.92);border:1px solid rgba(114,240,209,.25);color:var(--cyan);box-shadow:0 12px 30px rgba(0,0,0,.3);opacity:0;pointer-events:none;transform:translateY(8px);transition:opacity .2s ease,transform .2s ease}
+.back-top.visible{opacity:1;pointer-events:auto;transform:translateY(0)}
+@keyframes mark-glint{0%,70%,100%{transform:translateX(-80%)}85%{transform:translateX(80%)}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;animation:none!important;transition:none!important}}
+@media(max-width:700px){.wrap{padding-top:15px}.top{align-items:flex-start}.nav-shell{top:5px;margin-bottom:15px;padding:5px;border-radius:13px}.nav-label{display:none}.nav-link{padding:9px 10px}.nav-link .nav-index{display:none}.hero-price{font-size:clamp(38px,11vw,56px)}.panel:hover,.metric:hover,.forecast:hover{transform:none}.back-top{right:12px;bottom:12px}}
+
 </style>
 </head>
 <body>
@@ -16,7 +66,21 @@
  <div class="brand"><div class="mark">₿</div><div><div class="eyebrow">Independent research · v3.0</div><h1>Bitcoin Lab <span style="color:var(--cyan)">/</span> Research Terminal</h1><div class="sub">BTC · EUR · Προβλέψεις με καταγεγραμμένο ιστορικό</div></div></div>
  <div class="status" id="status"><span class="dot"></span><span>Έλεγχος δεδομένων…</span></div>
 </header>
-<section class="hero">
+
+<nav class="nav-shell" aria-label="Κύρια πλοήγηση">
+ <div class="navbar">
+  <span class="nav-label">Explore</span>
+  <a class="nav-link active" href="#overview"><span class="nav-index">01</span> Overview</a>
+  <a class="nav-link" href="#intelligence"><span class="nav-index">02</span> Intelligence</a>
+  <a class="nav-link" href="#history"><span class="nav-index">03</span> Price history</a>
+  <a class="nav-link" href="#controls"><span class="nav-index">04</span> Lab controls</a>
+  <a class="nav-link" href="#forecast-ledger"><span class="nav-index">05</span> Forecast ledger</a>
+  <a class="nav-link" href="#quality"><span class="nav-index">06</span> Data quality</a>
+  <a class="nav-link" href="#arena"><span class="nav-index">07</span> Model arena</a>
+ </div>
+ <div class="progress-track" aria-hidden="true"><div class="progress-bar" id="scrollProgress"></div></div>
+</nav>
+<section class="hero" id="overview">
  <article class="panel">
   <div class="panel-head"><div><h2>Αγορά · BTC / EUR</h2><div class="sub">Η πιο πρόσφατη διαθέσιμη ημερήσια τιμή</div></div><span class="chip" id="sourceChip">MARKET DATA</span></div>
   <div class="hero-price" id="price">—</div><div class="meta"><span>Ημερομηνία <b id="priceDate">—</b></span><span>24h <b id="change24">—</b></span><span>Δείγματα <b id="sampleCount">—</b></span></div>
@@ -35,8 +99,8 @@
  <div class="metric"><div class="label">MAE · zero baseline</div><div class="value" id="zeroMae">—</div><div class="note">Πρόβλεψη μηδενικής απόδοσης</div></div>
  <div class="metric"><div class="label">Lower absolute error vs zero</div><div class="value" id="beats">—</div><div class="note">Ποσοστό ώριμων προβλέψεων με μικρότερο απόλυτο σφάλμα από το zero baseline</div></div>
 </div>
-<section class="panel" style="margin-top:16px">
- <div class="panel-head"><div><h2>Market intelligence</h2><div class="sub">Μετρήσεις που υπολογίζονται από το διαθέσιμο ιστορικό κλεισιμάτων — όχι live order-book στοιχεία</div></div><span class="chip">QUANT SNAPSHOT</span></div>
+<section class="panel" id="intelligence" style="margin-top:16px">
+ <div class="panel-head"><div><div class="section-kicker">02 / Market context</div><h2>Market intelligence</h2><div class="sub">Μετρήσεις που υπολογίζονται από το διαθέσιμο ιστορικό κλεισιμάτων — όχι live order-book στοιχεία</div></div><span class="chip">QUANT SNAPSHOT</span></div>
  <div class="grid4" style="margin:0">
   <div class="metric"><div class="label">7D return</div><div class="value" id="ret7d">—</div><div class="note">Μεταβολή τελευταίων 7 ημερήσιων διαστημάτων</div></div>
   <div class="metric"><div class="label">30D return</div><div class="value" id="ret30d">—</div><div class="note">Μεταβολή τελευταίων 30 ημερήσιων διαστημάτων</div></div>
@@ -48,13 +112,13 @@
   <div class="metric"><div class="label">Trend context</div><div class="value" id="trendLabel">—</div><div class="note" id="trendNote">Σύγκριση τιμής με μέσους όρους 20 και 50 ημερών· περιγραφική ένδειξη, όχι πρόβλεψη</div></div>
  </div>
 </section>
-<section class="layout">
+<section class="layout" id="history">
  <article class="panel">
-  <div class="panel-head"><div><h2>Ιστορική πορεία</h2><div class="sub">Επιλεγμένο παράθυρο ημερήσιων τιμών</div></div><div class="controls"><select id="range" aria-label="Εύρος γραφήματος"><option value="90">90D</option><option value="180">180D</option><option value="365" selected>1Y</option><option value="730">2Y</option></select></div></div>
+  <div class="panel-head"><div><div class="section-kicker">03 / Price discovery</div><h2>Ιστορική πορεία</h2><div class="sub">Επιλεγμένο παράθυρο ημερήσιων τιμών</div></div><div class="controls"><select id="range" aria-label="Εύρος γραφήματος"><option value="90">90D</option><option value="180">180D</option><option value="365" selected>1Y</option><option value="730">2Y</option></select></div></div>
   <div class="chartbox"><canvas id="priceChart" aria-label="Γράφημα τιμής BTC/EUR"></canvas></div><div class="legend"><span>Τιμή BTC/EUR</span></div>
  </article>
- <article class="panel">
-  <div class="panel-head"><div><h2>Research controls</h2><div class="sub">Διαδραστική δοκιμή του risk-adjusted score</div></div><span class="chip">EXPLORATORY</span></div>
+ <article class="panel" id="controls">
+  <div class="panel-head"><div><div class="section-kicker">04 / Experiment</div><h2>Research controls</h2><div class="sub">Διαδραστική δοκιμή του risk-adjusted score</div></div><span class="chip">EXPLORATORY</span></div>
   <div style="display:grid;gap:15px">
    <label>λ · downside-tail penalty <div class="controls"><input id="lambda" type="number" min="0" max="5" step=".1" value="1"><span class="sub">Μεγαλύτερο λ → αυστηρότερη ποινή</span></div></label>
    <label>γ · uncertainty penalty <div class="controls"><input id="gamma" type="number" min="0" max="5" step=".1" value=".5"><span class="sub">Ποινή μεταβλητότητας</span></div></label>
@@ -65,17 +129,17 @@
   <div class="sub" style="margin-top:12px">Αυτό το score είναι πειραματικό και δεν είναι το ίδιο με την αξιολόγηση των αποθηκευμένων προβλέψεων.</div>
  </article>
 </section>
-<section class="panel" style="margin-top:16px">
- <div class="panel-head"><div><h2>Forecast ledger</h2><div class="sub">Καταγραφή προβλέψεων ανά ημερομηνία προέλευσης· οι εκτιμήσεις δεν ξαναγράφονται εκ των υστέρων</div></div><div class="actions"><button id="exportForecasts">Export forecasts CSV</button><button id="exportPrices">Export prices CSV</button></div></div>
+<section class="panel" id="forecast-ledger" style="margin-top:16px">
+ <div class="panel-head"><div><div class="section-kicker">05 / Audit trail</div><h2>Forecast ledger</h2><div class="sub">Καταγραφή προβλέψεων ανά ημερομηνία προέλευσης· οι εκτιμήσεις δεν ξαναγράφονται εκ των υστέρων</div></div><div class="actions"><button id="exportForecasts">Export forecasts CSV</button><button id="exportPrices">Export prices CSV</button></div></div>
  <div class="tablewrap"><table><thead><tr><th>Origin</th><th>Horizon</th><th>Target</th><th>Predicted</th><th>Realized</th><th>Status</th></tr></thead><tbody id="ledger"><tr><td colspan="6" class="empty">Δεν έχουν φορτωθεί στοιχεία.</td></tr></tbody></table></div>
 </section>
-<section class="panel" style="margin-top:16px">
- <div class="panel-head"><div><h2>Research Quality Sentinel</h2><div class="sub">Έλεγχοι ακεραιότητας δεδομένων, φρεσκάδας, κενών και προέλευσης</div></div><span class="chip">FAIL-SAFE</span></div>
+<section class="panel" id="quality" style="margin-top:16px">
+ <div class="panel-head"><div><div class="section-kicker">06 / Integrity checks</div><h2>Research Quality Sentinel</h2><div class="sub">Έλεγχοι ακεραιότητας δεδομένων, φρεσκάδας, κενών και προέλευσης</div></div><span class="chip">FAIL-SAFE</span></div>
  <div class="note-box" id="qualityStatus">Φόρτωση αναφοράς ποιότητας…</div>
  <div id="qualityDetails" class="sub" style="margin-top:10px"></div>
 </section>
-<section class="panel" style="margin-top:16px">
- <div class="panel-head"><div><h2>Model Arena · Walk-forward</h2><div class="sub">Ιστορικές προσομοιώσεις ξεχωριστά από τις πραγματικές προβλέψεις του ledger</div></div><span class="chip">OUT-OF-SAMPLE BY ORIGIN</span></div>
+<section class="panel" id="arena" style="margin-top:16px">
+ <div class="panel-head"><div><div class="section-kicker">07 / Out-of-sample</div><h2>Model Arena · Walk-forward</h2><div class="sub">Ιστορικές προσομοιώσεις ξεχωριστά από τις πραγματικές προβλέψεις του ledger</div></div><span class="chip">OUT-OF-SAMPLE BY ORIGIN</span></div>
  <div class="note-box" id="arenaStatus">Φόρτωση αποτελεσμάτων walk-forward…</div>
  <div id="arenaTables"></div>
  <p class="fineprint">MAE/RMSE μετρώνται σε log-return. Directional accuracy μετρά μόνο περιπτώσεις με μη μηδενική πραγματική απόδοση· μηδενική πρόβλεψη θεωρείται λανθασμένη κατεύθυνση. Skill = 1 − MAE μοντέλου / MAE zero baseline. Οι καθημερινές προβλέψεις επικαλύπτονται· η ξεχωριστή στήλη μη επικαλυπτόμενου δείγματος μειώνει, αλλά δεν εξαλείφει, τους στατιστικούς περιορισμούς.</p>
@@ -86,6 +150,7 @@
 </div>
 <p class="fineprint" id="freshness">Πηγή: CoinGecko · Τιμές αναφοράς BTC/EUR. Η ενημέρωση εξαρτάται από το GitHub Actions και τη διαθεσιμότητα της πηγής. <span id="sourceStatus"></span></p>
 </div>
+<button class="back-top" id="backTop" type="button" aria-label="Επιστροφή στην κορυφή" title="Back to top">↑</button>
 <script>
 "use strict";
 const $ = id => document.getElementById(id);
@@ -159,8 +224,18 @@ function renderQuality(){
  details.textContent=messages.length?messages.join(" · "):"Δεν αναφέρθηκαν προβλήματα από τον τελευταίο έλεγχο.";
 }
 function csvDownload(name,rows){const csv=rows.map(r=>r.map(v=>{const s=String(v??"");return '"'+s.replace(/"/g,'""')+'"'}).join(",")).join("\r\n");const blob=new Blob(["\ufeff"+csv],{type:"text/csv;charset=utf-8"}),url=URL.createObjectURL(blob),a=document.createElement("a");a.href=url;a.download=name;a.click();URL.revokeObjectURL(url)}
+
+function setupNavigation(){
+ const links=[...document.querySelectorAll(".nav-link")],targets=links.map(a=>document.querySelector(a.getAttribute("href"))).filter(Boolean),bar=$("scrollProgress"),topButton=$("backTop");
+ const setActive=id=>links.forEach(a=>{const active=a.getAttribute("href")==="#"+id;a.classList.toggle("active",active);if(active)a.setAttribute("aria-current","location");else a.removeAttribute("aria-current")});
+ if("IntersectionObserver" in window){const observer=new IntersectionObserver(entries=>{const visible=entries.filter(e=>e.isIntersecting).sort((a,b)=>b.intersectionRatio-a.intersectionRatio)[0];if(visible)setActive(visible.target.id)},{rootMargin:"-20% 0px -62% 0px",threshold:[0,.15,.35,.6]});targets.forEach(t=>observer.observe(t))}
+ const updateProgress=()=>{const max=document.documentElement.scrollHeight-window.innerHeight,progress=max>0?Math.min(100,Math.max(0,window.scrollY/max*100)):0;if(bar)bar.style.width=progress+"%";if(topButton)topButton.classList.toggle("visible",window.scrollY>520)};
+ window.addEventListener("scroll",updateProgress,{passive:true});updateProgress();
+ links.forEach(a=>a.addEventListener("click",()=>{const target=document.querySelector(a.getAttribute("href"));if(target){setActive(target.id);target.setAttribute("tabindex","-1");target.focus({preventScroll:true})}}));
+}
+
 async function init(){latest=await loadJSON("data/latest.json",{prices:[],status:"not_updated"});ledger=await loadJSON("data/forecasts.json",{forecasts:[]});arenaData=await loadJSON("data/model_arena.json",null);qualityData=await loadJSON("data/quality_report.json",null);prices=Array.isArray(latest.prices)?latest.prices.filter(p=>Number.isFinite(p.close)&&p.close>0):[];if(prices.length){const last=prices[prices.length-1],prev=prices[prices.length-2];$("price").textContent=fmtEUR(last.close);$("priceDate").textContent=fmtDate(last.date);$("change24").textContent=prev?fmtPct(last.close/prev.close-1):"—";$("change24").style.color=prev&&last.close>=prev.close?"var(--green)":"var(--red)";$("sampleCount").textContent=prices.length.toLocaleString("el-GR");$("freshness").firstChild.textContent="Πηγή: "+(latest.source||"Άγνωστη")+" · Τελευταία ενημέρωση UTC: "+(latest.last_updated||"άγνωστη")+" · ";$("sourceChip").textContent=(latest.source||"MARKET DATA").toUpperCase();setStatus(latest.status==="ok","Δεδομένα φορτώθηκαν · "+fmtDate(last.date));}else{setStatus(false,"Δεν υπάρχουν δεδομένα — εκτέλεσε το workflow");$("sourceStatus").textContent="Δεν βρέθηκε data/latest.json με ιστορικές τιμές."}
 draw($("miniChart"),prices.slice(-90),true);draw($("priceChart"),prices.slice(-Number($("range").value)));renderForecasts();metrics();renderLedger();renderMarketIntelligence();renderArena();renderQuality();calcInteractive();}
-$("horizon").addEventListener("change",()=>{renderForecasts();metrics();calcInteractive()});$("range").addEventListener("change",()=>draw($("priceChart"),prices.slice(-Number($("range").value))));["lambda","gamma","cost","lookback"].forEach(id=>$(id).addEventListener("input",calcInteractive));$("exportPrices").addEventListener("click",()=>csvDownload("bitcoin-lab-btc-eur-prices.csv",[["date","close_eur"],...prices.map(p=>[p.date,p.close])]));$("exportForecasts").addEventListener("click",()=>{const fs=ledger.forecasts||[];csvDownload("bitcoin-lab-forecast-ledger.csv",[["id","origin_date","target_date","horizon_days","model","predicted_log_return","risk_adjusted_score","realized_log_return","status"],...fs.map(f=>[f.id,f.origin_date,f.target_date,f.horizon_days,f.model,f.predicted_log_return,f.risk_adjusted_score,f.realized_log_return,f.status])])});window.addEventListener("resize",()=>{draw($("miniChart"),prices.slice(-90),true);draw($("priceChart"),prices.slice(-Number($("range").value)))});init();
+$("horizon").addEventListener("change",()=>{renderForecasts();metrics();calcInteractive()});$("range").addEventListener("change",()=>draw($("priceChart"),prices.slice(-Number($("range").value))));["lambda","gamma","cost","lookback"].forEach(id=>$(id).addEventListener("input",calcInteractive));$("exportPrices").addEventListener("click",()=>csvDownload("bitcoin-lab-btc-eur-prices.csv",[["date","close_eur"],...prices.map(p=>[p.date,p.close])]));$("exportForecasts").addEventListener("click",()=>{const fs=ledger.forecasts||[];csvDownload("bitcoin-lab-forecast-ledger.csv",[["id","origin_date","target_date","horizon_days","model","predicted_log_return","risk_adjusted_score","realized_log_return","status"],...fs.map(f=>[f.id,f.origin_date,f.target_date,f.horizon_days,f.model,f.predicted_log_return,f.risk_adjusted_score,f.realized_log_return,f.status])])});window.addEventListener("resize",()=>{draw($("miniChart"),prices.slice(-90),true);draw($("priceChart"),prices.slice(-Number($("range").value)))});$("backTop").addEventListener("click",()=>window.scrollTo({top:0,behavior:matchMedia("(prefers-reduced-motion: reduce)").matches?"auto":"smooth"}));setupNavigation();init();
 </script>
 </body></html>
