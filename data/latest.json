@@ -1,6 +1,8 @@
 {
   "schema_version": 2,
   "source": "Kraken",
+  "source_switch_detected": false,
+  "historical_observation_provenance": "unknown_before_observation_level_tracking",
   "currency": "EUR",
   "last_updated": "2026-10-26T14:12:08+00:00",
   "prices": [

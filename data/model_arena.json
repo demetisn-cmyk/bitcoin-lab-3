@@ -1,5 +1,5 @@
 {
-  "schema_version": 1,
+  "schema_version": 2,
   "generated_at_utc": "2026-10-26T14:12:08+00:00",
   "data_start": "2024-11-05",
   "data_end": "2026-10-25",
@@ -11,7 +11,18 @@
     "shrunk_trailing_mean_v1.0": "Trailing 180-return mean multiplied by horizon and 0.35.",
     "momentum_30_v1": "Trailing 30-return mean multiplied by horizon and 0.35."
   },
-  "method": "Expanding-time walk-forward origins with fixed trailing windows; features at origin i use only prices through i. Outcomes use exact calendar target dates.",
+  "method": "Walk-forward origins use only prices available at origin; outcomes require exact calendar target dates and consecutive daily history.",
+  "experiment_policy": {
+    "registered_candidates": [
+      "zero_return_v1",
+      "historical_mean_180_v1",
+      "shrunk_trailing_mean_v1.0",
+      "momentum_30_v1"
+    ],
+    "production_model_changed": false,
+    "promotion": "No automatic promotion. Candidates require independent chronological holdout evidence and adequate samples.",
+    "selection_bias_warning": "Comparing multiple candidates on the same historical sample creates selection bias."
+  },
   "horizons": {
     "30": {
       "horizon_days": 30,
@@ -22,11 +33,12 @@
           "n": 510,
           "mae": 0.0915064545,
           "rmse": 0.122173102,
-          "directional_accuracy": 0.0,
+          "directional_accuracy": null,
           "directional_n": 510,
           "zero_baseline_mae": 0.0915064545,
           "zero_baseline_rmse": 0.122173102,
-          "skill_vs_zero_mae": 0.0
+          "skill_vs_zero_mae": 0.0,
+          "units": "log-return (not simple percentage return)"
         },
         "historical_mean_180_v1": {
           "n": 510,
@@ -36,7 +48,8 @@
           "directional_n": 510,
           "zero_baseline_mae": 0.0915064545,
           "zero_baseline_rmse": 0.122173102,
-          "skill_vs_zero_mae": -0.167942
+          "skill_vs_zero_mae": -0.167942,
+          "units": "log-return (not simple percentage return)"
         },
         "shrunk_trailing_mean_v1.0": {
           "n": 510,
@@ -46,7 +59,8 @@
           "directional_n": 510,
           "zero_baseline_mae": 0.0915064545,
           "zero_baseline_rmse": 0.122173102,
-          "skill_vs_zero_mae": -0.042239
+          "skill_vs_zero_mae": -0.042239,
+          "units": "log-return (not simple percentage return)"
         },
         "momentum_30_v1": {
           "n": 510,
@@ -56,7 +70,8 @@
           "directional_n": 510,
           "zero_baseline_mae": 0.0915064545,
           "zero_baseline_rmse": 0.122173102,
-          "skill_vs_zero_mae": -0.129005
+          "skill_vs_zero_mae": -0.129005,
+          "units": "log-return (not simple percentage return)"
         }
       },
       "non_overlapping": {
@@ -64,11 +79,12 @@
           "n": 17,
           "mae": 0.0912789882,
           "rmse": 0.1131094279,
-          "directional_accuracy": 0.0,
+          "directional_accuracy": null,
           "directional_n": 17,
           "zero_baseline_mae": 0.0912789882,
           "zero_baseline_rmse": 0.1131094279,
-          "skill_vs_zero_mae": 0.0
+          "skill_vs_zero_mae": 0.0,
+          "units": "log-return (not simple percentage return)"
         },
         "historical_mean_180_v1": {
           "n": 17,
@@ -78,7 +94,8 @@
           "directional_n": 17,
           "zero_baseline_mae": 0.0912789882,
           "zero_baseline_rmse": 0.1131094279,
-          "skill_vs_zero_mae": -0.063061
+          "skill_vs_zero_mae": -0.063061,
+          "units": "log-return (not simple percentage return)"
         },
         "shrunk_trailing_mean_v1.0": {
           "n": 17,
@@ -88,7 +105,8 @@
           "directional_n": 17,
           "zero_baseline_mae": 0.0912789882,
           "zero_baseline_rmse": 0.1131094279,
-          "skill_vs_zero_mae": -0.006934
+          "skill_vs_zero_mae": -0.006934,
+          "units": "log-return (not simple percentage return)"
         },
         "momentum_30_v1": {
           "n": 17,
@@ -98,10 +116,98 @@
           "directional_n": 17,
           "zero_baseline_mae": 0.0912789882,
           "zero_baseline_rmse": 0.1131094279,
-          "skill_vs_zero_mae": -0.037161
+          "skill_vs_zero_mae": -0.037161,
+          "units": "log-return (not simple percentage return)"
         }
       },
-      "note": "Daily-origin results overlap. Non-overlapping subset samples origins every horizon days; neither is proof of future performance."
+      "uncertainty": {
+        "method": "Empirical 5th–95th percentiles of earlier fully realized horizon-matched log returns available at each origin.",
+        "nominal_coverage": 0.9,
+        "status": "experimental_unvalidated",
+        "n_evaluated": 421,
+        "realized_coverage": 0.695962,
+        "mean_interval_width_log_return": 0.3172181319,
+        "minimum_calibration_sample": 60,
+        "warning": "Not calibrated probabilities; calibration samples overlap and coverage is descriptive."
+      },
+      "regimes": {
+        "definition": "Trend uses 30-day cumulative log return thresholds ±2%; volatility compares trailing 30-day population standard deviation with trailing 180-day standard deviation (high >=1.25x, low <=0.75x, otherwise normal). Past-only and descriptive.",
+        "groups": {
+          "up_normal_volatility": {
+            "n": 97,
+            "directional_correct": 53,
+            "directional_n": 97,
+            "mae_log_return": 0.0983009353,
+            "directional_accuracy": 0.546392,
+            "interpretation": "descriptive_only; small groups are not conclusive"
+          },
+          "up_low_volatility": {
+            "n": 109,
+            "directional_correct": 44,
+            "directional_n": 109,
+            "mae_log_return": 0.0917556153,
+            "directional_accuracy": 0.40367,
+            "interpretation": "descriptive_only; small groups are not conclusive"
+          },
+          "flat_low_volatility": {
+            "n": 62,
+            "directional_correct": 22,
+            "directional_n": 62,
+            "mae_log_return": 0.0977064108,
+            "directional_accuracy": 0.354839,
+            "interpretation": "descriptive_only; small groups are not conclusive"
+          },
+          "down_normal_volatility": {
+            "n": 82,
+            "directional_correct": 36,
+            "directional_n": 82,
+            "mae_log_return": 0.0859629771,
+            "directional_accuracy": 0.439024,
+            "interpretation": "descriptive_only; small groups are not conclusive"
+          },
+          "flat_normal_volatility": {
+            "n": 35,
+            "directional_correct": 13,
+            "directional_n": 35,
+            "mae_log_return": 0.1643003367,
+            "directional_accuracy": 0.371429,
+            "interpretation": "descriptive_only; small groups are not conclusive"
+          },
+          "down_low_volatility": {
+            "n": 55,
+            "directional_correct": 29,
+            "directional_n": 55,
+            "mae_log_return": 0.0883067049,
+            "directional_accuracy": 0.527273,
+            "interpretation": "descriptive_only; small groups are not conclusive"
+          },
+          "down_high_volatility": {
+            "n": 62,
+            "directional_correct": 23,
+            "directional_n": 62,
+            "mae_log_return": 0.0719881982,
+            "directional_accuracy": 0.370968,
+            "interpretation": "descriptive_only; small groups are not conclusive"
+          },
+          "flat_high_volatility": {
+            "n": 2,
+            "directional_correct": 0,
+            "directional_n": 2,
+            "mae_log_return": 0.251586883,
+            "directional_accuracy": 0.0,
+            "interpretation": "descriptive_only; small groups are not conclusive"
+          },
+          "up_high_volatility": {
+            "n": 6,
+            "directional_correct": 5,
+            "directional_n": 6,
+            "mae_log_return": 0.0703977591,
+            "directional_accuracy": 0.833333,
+            "interpretation": "descriptive_only; small groups are not conclusive"
+          }
+        }
+      },
+      "note": "Daily-origin outcomes overlap. Non-overlap origins are selected by actual calendar spacing; neither evaluation proves future performance."
     },
     "90": {
       "horizon_days": 90,
@@ -112,11 +218,12 @@
           "n": 450,
           "mae": 0.1746962527,
           "rmse": 0.2005862026,
-          "directional_accuracy": 0.0,
+          "directional_accuracy": null,
           "directional_n": 450,
           "zero_baseline_mae": 0.1746962527,
           "zero_baseline_rmse": 0.2005862026,
-          "skill_vs_zero_mae": 0.0
+          "skill_vs_zero_mae": 0.0,
+          "units": "log-return (not simple percentage return)"
         },
         "historical_mean_180_v1": {
           "n": 450,
@@ -126,7 +233,8 @@
           "directional_n": 450,
           "zero_baseline_mae": 0.1746962527,
           "zero_baseline_rmse": 0.2005862026,
-          "skill_vs_zero_mae": -0.213059
+          "skill_vs_zero_mae": -0.213059,
+          "units": "log-return (not simple percentage return)"
         },
         "shrunk_trailing_mean_v1.0": {
           "n": 450,
@@ -136,7 +244,8 @@
           "directional_n": 450,
           "zero_baseline_mae": 0.1746962527,
           "zero_baseline_rmse": 0.2005862026,
-          "skill_vs_zero_mae": -0.015317
+          "skill_vs_zero_mae": -0.015317,
+          "units": "log-return (not simple percentage return)"
         },
         "momentum_30_v1": {
           "n": 450,
@@ -146,7 +255,8 @@
           "directional_n": 450,
           "zero_baseline_mae": 0.1746962527,
           "zero_baseline_rmse": 0.2005862026,
-          "skill_vs_zero_mae": -0.22025
+          "skill_vs_zero_mae": -0.22025,
+          "units": "log-return (not simple percentage return)"
         }
       },
       "non_overlapping": {
@@ -154,11 +264,12 @@
           "n": 5,
           "mae": 0.1408391772,
           "rmse": 0.1671532856,
-          "directional_accuracy": 0.0,
+          "directional_accuracy": null,
           "directional_n": 5,
           "zero_baseline_mae": 0.1408391772,
           "zero_baseline_rmse": 0.1671532856,
-          "skill_vs_zero_mae": 0.0
+          "skill_vs_zero_mae": 0.0,
+          "units": "log-return (not simple percentage return)"
         },
         "historical_mean_180_v1": {
           "n": 5,
@@ -168,7 +279,8 @@
           "directional_n": 5,
           "zero_baseline_mae": 0.1408391772,
           "zero_baseline_rmse": 0.1671532856,
-          "skill_vs_zero_mae": 0.267132
+          "skill_vs_zero_mae": 0.267132,
+          "units": "log-return (not simple percentage return)"
         },
         "shrunk_trailing_mean_v1.0": {
           "n": 5,
@@ -178,7 +290,8 @@
           "directional_n": 5,
           "zero_baseline_mae": 0.1408391772,
           "zero_baseline_rmse": 0.1671532856,
-          "skill_vs_zero_mae": 0.21167
+          "skill_vs_zero_mae": 0.21167,
+          "units": "log-return (not simple percentage return)"
         },
         "momentum_30_v1": {
           "n": 5,
@@ -188,10 +301,98 @@
           "directional_n": 5,
           "zero_baseline_mae": 0.1408391772,
           "zero_baseline_rmse": 0.1671532856,
-          "skill_vs_zero_mae": 0.090999
+          "skill_vs_zero_mae": 0.090999,
+          "units": "log-return (not simple percentage return)"
         }
       },
-      "note": "Daily-origin results overlap. Non-overlapping subset samples origins every horizon days; neither is proof of future performance."
+      "uncertainty": {
+        "method": "Empirical 5th–95th percentiles of earlier fully realized horizon-matched log returns available at each origin.",
+        "nominal_coverage": 0.9,
+        "status": "experimental_unvalidated",
+        "n_evaluated": 301,
+        "realized_coverage": 0.478405,
+        "mean_interval_width_log_return": 0.3961302967,
+        "minimum_calibration_sample": 60,
+        "warning": "Not calibrated probabilities; calibration samples overlap and coverage is descriptive."
+      },
+      "regimes": {
+        "definition": "Trend uses 30-day cumulative log return thresholds ±2%; volatility compares trailing 30-day population standard deviation with trailing 180-day standard deviation (high >=1.25x, low <=0.75x, otherwise normal). Past-only and descriptive.",
+        "groups": {
+          "up_normal_volatility": {
+            "n": 64,
+            "directional_correct": 53,
+            "directional_n": 64,
+            "mae_log_return": 0.1070583486,
+            "directional_accuracy": 0.828125,
+            "interpretation": "descriptive_only; small groups are not conclusive"
+          },
+          "up_low_volatility": {
+            "n": 104,
+            "directional_correct": 47,
+            "directional_n": 104,
+            "mae_log_return": 0.1384044126,
+            "directional_accuracy": 0.451923,
+            "interpretation": "descriptive_only; small groups are not conclusive"
+          },
+          "flat_low_volatility": {
+            "n": 49,
+            "directional_correct": 14,
+            "directional_n": 49,
+            "mae_log_return": 0.1992103635,
+            "directional_accuracy": 0.285714,
+            "interpretation": "descriptive_only; small groups are not conclusive"
+          },
+          "down_normal_volatility": {
+            "n": 82,
+            "directional_correct": 34,
+            "directional_n": 82,
+            "mae_log_return": 0.2431203424,
+            "directional_accuracy": 0.414634,
+            "interpretation": "descriptive_only; small groups are not conclusive"
+          },
+          "flat_normal_volatility": {
+            "n": 35,
+            "directional_correct": 25,
+            "directional_n": 35,
+            "mae_log_return": 0.1206837476,
+            "directional_accuracy": 0.714286,
+            "interpretation": "descriptive_only; small groups are not conclusive"
+          },
+          "down_low_volatility": {
+            "n": 51,
+            "directional_correct": 5,
+            "directional_n": 51,
+            "mae_log_return": 0.1814679559,
+            "directional_accuracy": 0.098039,
+            "interpretation": "descriptive_only; small groups are not conclusive"
+          },
+          "down_high_volatility": {
+            "n": 62,
+            "directional_correct": 31,
+            "directional_n": 62,
+            "mae_log_return": 0.2404108589,
+            "directional_accuracy": 0.5,
+            "interpretation": "descriptive_only; small groups are not conclusive"
+          },
+          "flat_high_volatility": {
+            "n": 2,
+            "directional_correct": 0,
+            "directional_n": 2,
+            "mae_log_return": 0.243463521,
+            "directional_accuracy": 0.0,
+            "interpretation": "descriptive_only; small groups are not conclusive"
+          },
+          "up_high_volatility": {
+            "n": 1,
+            "directional_correct": 1,
+            "directional_n": 1,
+            "mae_log_return": 0.0033058226,
+            "directional_accuracy": 1.0,
+            "interpretation": "descriptive_only; small groups are not conclusive"
+          }
+        }
+      },
+      "note": "Daily-origin outcomes overlap. Non-overlap origins are selected by actual calendar spacing; neither evaluation proves future performance."
     }
   }
 }

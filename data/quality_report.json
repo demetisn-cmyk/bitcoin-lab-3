@@ -1,0 +1,22 @@
+{
+  "schema_version": 1,
+  "status": "warn",
+  "generated_at_utc": "2026-10-26T14:12:08+00:00",
+  "data_date": "2026-10-25",
+  "source": "Kraken",
+  "historical_observation_provenance": "unknown_before_observation_level_tracking",
+  "checks": {
+    "price_observations": 720,
+    "valid_price_observations": 720,
+    "forecast_records": 6,
+    "max_staleness_days": 3,
+    "implausible_jump_warning_threshold": 0.25
+  },
+  "warnings": [
+    {
+      "code": "historical_provenance_unknown",
+      "message": "Provider attribution for older individual observations is not known and is not inferred."
+    }
+  ],
+  "failures": []
+}

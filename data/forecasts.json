@@ -21,7 +21,10 @@
       "realized_log_return": null,
       "realized_date": null,
       "realized_price_eur": null,
-      "created_at_utc": "2026-10-25T23:01:16+00:00"
+      "created_at_utc": "2026-10-25T23:01:16+00:00",
+      "model_version": "legacy_unknown",
+      "provenance_status": "legacy_unknown",
+      "evaluation_eligible": true
     },
     {
       "id": "2026-10-24-90d",
@@ -42,28 +45,10 @@
       "realized_log_return": null,
       "realized_date": null,
       "realized_price_eur": null,
-      "created_at_utc": "2026-10-25T23:01:16+00:00"
-    },
-    {
-      "id": "2026-10-25-30d",
-      "origin_date": "2026-10-25",
-      "target_date": "2026-11-24",
-      "horizon_days": 30,
-      "origin_price_eur": 71355.4,
-      "model": "shrunk_trailing_mean_v1",
-      "lookback_days": 180,
-      "shrinkage": 0.35,
-      "predicted_log_return": 0.00529906,
-      "zero_baseline_log_return": 0.0,
-      "downside_tail_proxy": 0.13901074,
-      "uncertainty_penalty": 0.16492105,
-      "assumed_cost": 0.005,
-      "risk_adjusted_score": -0.2211722,
-      "status": "pending",
-      "realized_log_return": null,
-      "realized_date": null,
-      "realized_price_eur": null,
-      "created_at_utc": "2026-10-26T05:47:05+00:00"
+      "created_at_utc": "2026-10-25T23:01:16+00:00",
+      "model_version": "legacy_unknown",
+      "provenance_status": "legacy_unknown",
+      "evaluation_eligible": true
     },
     {
       "id": "2026-10-25-30d-shrunk_trailing_mean_v1.0",
@@ -87,28 +72,33 @@
       "realized_date": null,
       "realized_price_eur": null,
       "matured_at_utc": null,
-      "created_at_utc": "2026-10-26T14:09:38+00:00"
+      "created_at_utc": "2026-10-26T14:09:38+00:00",
+      "evaluation_eligible": true
     },
     {
-      "id": "2026-10-25-90d",
+      "id": "2026-10-25-30d",
       "origin_date": "2026-10-25",
-      "target_date": "2027-01-23",
-      "horizon_days": 90,
+      "target_date": "2026-11-24",
+      "horizon_days": 30,
       "origin_price_eur": 71355.4,
       "model": "shrunk_trailing_mean_v1",
       "lookback_days": 180,
       "shrinkage": 0.35,
-      "predicted_log_return": 0.01589718,
+      "predicted_log_return": 0.00529906,
       "zero_baseline_log_return": 0.0,
-      "downside_tail_proxy": 0.24077367,
-      "uncertainty_penalty": 0.28565163,
+      "downside_tail_proxy": 0.13901074,
+      "uncertainty_penalty": 0.16492105,
       "assumed_cost": 0.005,
-      "risk_adjusted_score": -0.3727023,
+      "risk_adjusted_score": -0.2211722,
       "status": "pending",
       "realized_log_return": null,
       "realized_date": null,
       "realized_price_eur": null,
-      "created_at_utc": "2026-10-26T05:47:05+00:00"
+      "created_at_utc": "2026-10-26T05:47:05+00:00",
+      "model_version": "legacy_unknown",
+      "provenance_status": "legacy_unknown",
+      "evaluation_eligible": false,
+      "evaluation_exclusion_reason": "equivalent_forecast_record_retained_for_history_but_excluded_from_metrics"
     },
     {
       "id": "2026-10-25-90d-shrunk_trailing_mean_v1.0",
@@ -132,8 +122,34 @@
       "realized_date": null,
       "realized_price_eur": null,
       "matured_at_utc": null,
-      "created_at_utc": "2026-10-26T14:09:38+00:00"
+      "created_at_utc": "2026-10-26T14:09:38+00:00",
+      "evaluation_eligible": true
+    },
+    {
+      "id": "2026-10-25-90d",
+      "origin_date": "2026-10-25",
+      "target_date": "2027-01-23",
+      "horizon_days": 90,
+      "origin_price_eur": 71355.4,
+      "model": "shrunk_trailing_mean_v1",
+      "lookback_days": 180,
+      "shrinkage": 0.35,
+      "predicted_log_return": 0.01589718,
+      "zero_baseline_log_return": 0.0,
+      "downside_tail_proxy": 0.24077367,
+      "uncertainty_penalty": 0.28565163,
+      "assumed_cost": 0.005,
+      "risk_adjusted_score": -0.3727023,
+      "status": "pending",
+      "realized_log_return": null,
+      "realized_date": null,
+      "realized_price_eur": null,
+      "created_at_utc": "2026-10-26T05:47:05+00:00",
+      "model_version": "legacy_unknown",
+      "provenance_status": "legacy_unknown",
+      "evaluation_eligible": false,
+      "evaluation_exclusion_reason": "equivalent_forecast_record_retained_for_history_but_excluded_from_metrics"
     }
   ],
-  "last_updated": "2026-10-26T14:12:08+00:00"
+  "last_updated": "2026-10-26T20:54:27+00:00"
 }
