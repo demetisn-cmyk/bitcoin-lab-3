@@ -24,7 +24,8 @@
       "created_at_utc": "2026-10-25T23:01:16+00:00",
       "model_version": "legacy_unknown",
       "provenance_status": "legacy_unknown",
-      "evaluation_eligible": true
+      "evaluation_eligible": true,
+      "risk_score_version": "legacy_daily_tail_sqrt_h_v1"
     },
     {
       "id": "2026-10-24-90d",
@@ -48,7 +49,8 @@
       "created_at_utc": "2026-10-25T23:01:16+00:00",
       "model_version": "legacy_unknown",
       "provenance_status": "legacy_unknown",
-      "evaluation_eligible": true
+      "evaluation_eligible": true,
+      "risk_score_version": "legacy_daily_tail_sqrt_h_v1"
     },
     {
       "id": "2026-10-25-30d-shrunk_trailing_mean_v1.0",
@@ -73,7 +75,8 @@
       "realized_price_eur": null,
       "matured_at_utc": null,
       "created_at_utc": "2026-10-26T14:09:38+00:00",
-      "evaluation_eligible": true
+      "evaluation_eligible": true,
+      "risk_score_version": "legacy_daily_tail_sqrt_h_v1"
     },
     {
       "id": "2026-10-25-30d",
@@ -98,7 +101,8 @@
       "model_version": "legacy_unknown",
       "provenance_status": "legacy_unknown",
       "evaluation_eligible": false,
-      "evaluation_exclusion_reason": "equivalent_forecast_record_retained_for_history_but_excluded_from_metrics"
+      "evaluation_exclusion_reason": "equivalent_forecast_record_retained_for_history_but_excluded_from_metrics",
+      "risk_score_version": "legacy_daily_tail_sqrt_h_v1"
     },
     {
       "id": "2026-10-25-90d-shrunk_trailing_mean_v1.0",
@@ -123,7 +127,8 @@
       "realized_price_eur": null,
       "matured_at_utc": null,
       "created_at_utc": "2026-10-26T14:09:38+00:00",
-      "evaluation_eligible": true
+      "evaluation_eligible": true,
+      "risk_score_version": "legacy_daily_tail_sqrt_h_v1"
     },
     {
       "id": "2026-10-25-90d",
@@ -148,8 +153,9 @@
       "model_version": "legacy_unknown",
       "provenance_status": "legacy_unknown",
       "evaluation_eligible": false,
-      "evaluation_exclusion_reason": "equivalent_forecast_record_retained_for_history_but_excluded_from_metrics"
+      "evaluation_exclusion_reason": "equivalent_forecast_record_retained_for_history_but_excluded_from_metrics",
+      "risk_score_version": "legacy_daily_tail_sqrt_h_v1"
     }
   ],
-  "last_updated": "2026-10-26T20:54:27+00:00"
+  "last_updated": "2026-10-26T20:55:57+00:00"
 }
