@@ -44,7 +44,7 @@ The updater writes `data/latest.json` and `data/forecasts.json`.
 The live forecast ledger records model version and data cutoff on new entries. Existing entries are retained; maturity requires an observed close on the exact target date, so missing target dates remain pending instead of being silently shifted.
 
 ## Method summary
-The baseline model uses a shrunk historical daily log-return mean over a trailing window. For horizon `h`, its expected log return is the trailing mean multiplied by `h` and a shrinkage factor. The risk-adjusted score subtracts a downside-tail proxy, a volatility uncertainty penalty and an assumed round-trip cost. These are transparent research knobs, not calibrated probabilities or validated trading edges.
+The baseline forecast model uses a shrunk historical daily log-return mean over a trailing window. For horizon h, its expected log return is the trailing mean multiplied by h and a shrinkage factor. The separately versioned risk score now uses historical returns matched to the actual forecast horizon: the empirical 5th percentile contributes a downside proxy and half the 5th–95th percentile range contributes an uncertainty penalty. At least 60 consecutive, horizon-matched historical outcomes are required; otherwise the score is unavailable. Samples overlap and the coefficients/cost assumption are not calibrated, so the score remains an experimental heuristic—not a probability, forecast, or validated trading edge.
 
 The dashboard's interactive parameters are for **exploration only**; changing them does not rewrite forecasts already in the ledger. Forecast evaluation uses stored predictions and prices available after each forecast origin.
 
