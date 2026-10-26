@@ -263,5 +263,26 @@ class ForecastPipelineTests(unittest.TestCase):
         self.assertEqual(ledger["forecasts"][0]["evaluation_exclusion_reason"],
                          "equivalent_forecast_record_retained_for_history_but_excluded_from_metrics")
 
+
+    def test_nonoverlap_uses_calendar_days_not_row_count(self):
+        origins = [
+            {"origin_date": "2025-01-01"},
+            {"origin_date": "2025-01-03"},
+            {"origin_date": "2025-01-07"},
+            {"origin_date": "2025-01-10"},
+            {"origin_date": "2025-01-12"},
+        ]
+        selected = arena.select_nonoverlap_origin_dates(origins, 5)
+        self.assertEqual(selected, {"2025-01-01", "2025-01-07", "2025-01-12"})
+
+    def test_schema_invalid_ledger_is_rejected_without_modifying_file(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / "forecasts.json"
+            original = b'{"forecasts":[{"id":"bad"}]}'
+            path.write_bytes(original)
+            with self.assertRaises(RuntimeError):
+                module.validate_persistent_schemas({}, {"forecasts": [{"id": "bad"}]})
+            self.assertEqual(path.read_bytes(), original)
+
 if __name__ == "__main__":
     unittest.main()
