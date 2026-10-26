@@ -231,6 +231,17 @@ def horizon_log_returns(prices, horizon):
     return out
 
 def build_forecast(prices, horizon, now_date):
+    recent_prices = prices[-(LOOKBACK + 1):]
+    if len(recent_prices) != LOOKBACK + 1:
+        raise RuntimeError(f"At least {LOOKBACK + 1} consecutive daily closes are required before forecasting.")
+    for previous, current in zip(recent_prices, recent_prices[1:]):
+        try:
+            gap = (datetime.fromisoformat(current["date"]).date() -
+                   datetime.fromisoformat(previous["date"]).date()).days
+        except (KeyError, TypeError, ValueError) as exc:
+            raise RuntimeError("Invalid date in trailing forecast window.") from exc
+        if gap != 1:
+            raise RuntimeError(f"Forecast window contains a {gap}-day gap between {previous.get('date')} and {current.get('date')}; refusing to label multi-day returns as daily.")
     rets = log_returns(prices)
     window = [r for _, r in rets[-LOOKBACK:]]
     if len(window) < 60:
