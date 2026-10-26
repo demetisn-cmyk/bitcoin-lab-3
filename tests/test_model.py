@@ -67,6 +67,8 @@ class ForecastPipelineTests(unittest.TestCase):
         self.assertEqual(forecast["model_version"], "1.0")
         self.assertEqual(forecast["data_cutoff_date"], forecast["origin_date"])
         self.assertIn("shrunk_trailing_mean_v1.0", forecast["id"])
+        repeated = module.build_forecast(prices, 30, start)
+        self.assertEqual(forecast["id"], repeated["id"])
 
     def test_maturity_requires_exact_target_date(self):
         ledger = {"forecasts": [{
