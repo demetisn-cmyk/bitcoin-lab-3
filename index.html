@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="theme-color" content="#0b1020">
-<meta name="description" content="Bitcoin Lab 3.0 — διαφανές, πειραματικό dashboard έρευνας BTC/EUR με out-of-sample αξιολόγηση.">
-<title>Bitcoin Lab 3.0 — Research Terminal</title>
+<meta name="description" content="Bitcoin Lab 4.0 — διαφανές, πειραματικό dashboard έρευνας BTC/EUR με out-of-sample αξιολόγηση.">
+<title>Bitcoin Lab 4.0 — Research Terminal</title>
 <style>
 :root{color-scheme:dark;--bg:#080d19;--panel:#111a2c;--panel2:#0d1525;--line:#263550;--text:#eaf0ff;--muted:#91a0bd;--cyan:#69e0d0;--blue:#86a8ff;--amber:#ffc66d;--red:#ff8e9b;--green:#82e6b4;--radius:18px}
 *{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 15% -15%,#1a3152 0,transparent 40%),var(--bg);color:var(--text);font:15px/1.55 Inter,ui-sans-serif,system-ui,-apple-system,Segoe UI,sans-serif}a{color:var(--cyan)}button,select,input{font:inherit;color:inherit;background:#121e32;border:1px solid var(--line);border-radius:10px;padding:9px 11px}button{cursor:pointer}button:hover{border-color:var(--cyan)}button:focus-visible,select:focus-visible,input:focus-visible{outline:2px solid var(--cyan);outline-offset:2px}.wrap{max-width:1480px;margin:auto;padding:28px 20px 60px}.top{display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap;margin-bottom:22px}.brand{display:flex;align-items:center;gap:12px}.mark{width:44px;height:44px;display:grid;place-items:center;border-radius:14px;background:linear-gradient(135deg,#63e3d1,#8faaff);color:#07121c;font-size:23px;font-weight:900}.eyebrow{font-size:11px;text-transform:uppercase;letter-spacing:.18em;color:var(--cyan);font-weight:800}.brand h1{font-size:23px;margin:0;letter-spacing:-.04em}.sub{color:var(--muted);font-size:13px}.status{display:inline-flex;align-items:center;gap:8px;padding:7px 11px;border:1px solid var(--line);border-radius:999px;background:#0d1627;font-size:12px;color:var(--muted)}.dot{width:7px;height:7px;border-radius:50%;background:var(--amber)}.hero{display:grid;grid-template-columns:1.6fr 1fr;gap:16px}.panel{background:linear-gradient(145deg,rgba(20,31,52,.97),rgba(12,20,35,.97));border:1px solid var(--line);border-radius:var(--radius);padding:20px;min-width:0;box-shadow:0 18px 55px #00000015}.hero-price{font-size:clamp(40px,5.4vw,64px);font-weight:800;letter-spacing:-.055em;line-height:1.2;margin:8px 0}.meta{display:flex;gap:18px;flex-wrap:wrap;color:var(--muted);font-size:12px}.meta b{color:var(--text);font-weight:650}.panel-head{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;margin-bottom:16px}.panel h2{font-size:16px;margin:0;letter-spacing:-.02em}.panel h3{font-size:13px;margin:0;color:var(--muted);font-weight:650}.chip{font-size:11px;padding:4px 8px;border-radius:7px;background:#142c35;color:var(--cyan);white-space:nowrap}.grid4{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin:16px 0}.metric{background:#0b1424;border:1px solid var(--line);border-radius:14px;padding:15px;min-width:0}.metric .label{color:var(--muted);font-size:12px}.metric .value{font-size:23px;font-weight:750;letter-spacing:-.04em;margin:8px 0 3px;overflow-wrap:anywhere}.metric .note{color:var(--muted);font-size:11px}.layout{display:grid;grid-template-columns:1.35fr 1fr;gap:16px;margin-top:16px}.controls{display:flex;align-items:center;gap:9px;flex-wrap:wrap}.controls label{display:flex;align-items:center;gap:6px;color:var(--muted);font-size:12px}.controls input{width:82px}.chartbox{height:380px;position:relative}canvas{width:100%;height:100%;display:block}.legend{display:flex;gap:16px;flex-wrap:wrap;color:var(--muted);font-size:11px;margin-top:8px}.legend span:before{content:"";display:inline-block;width:9px;height:9px;border-radius:3px;background:var(--cyan);margin-right:6px}.legend span:nth-child(2):before{background:var(--blue)}.forecast-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.forecast{background:#0b1424;border:1px solid var(--line);border-radius:14px;padding:15px}.forecast .days{font-size:12px;color:var(--muted)}.forecast .return{font-size:25px;font-weight:800;letter-spacing:-.04em;margin:8px 0}.forecast .small{font-size:11px;color:var(--muted)}.signal{display:inline-block;font-size:11px;border-radius:6px;padding:3px 7px;margin-top:8px}.signal.pos{background:#17372f;color:var(--green)}.signal.neg{background:#3b202b;color:var(--red)}.signal.neutral{background:#2a2c36;color:var(--amber)}.tablewrap{overflow:auto}table{width:100%;border-collapse:collapse;font-size:12px;white-space:nowrap}th,td{text-align:left;padding:11px 9px;border-bottom:1px solid #202d43}th{color:var(--muted);font-weight:600}td{color:#d9e3f7}.empty{text-align:center;color:var(--muted);padding:22px}.foot{margin-top:18px;display:grid;grid-template-columns:1fr 1fr;gap:12px}.notice{padding:14px 16px;border-radius:13px;border:1px solid #4a3b29;background:#241d14;color:#e9cf9f;font-size:12px}.note-box{padding:14px 16px;border:1px solid var(--line);border-radius:13px;color:var(--muted);font-size:12px}.section-title{margin:25px 0 12px;display:flex;justify-content:space-between;align-items:end;gap:12px}.section-title h2{margin:0;font-size:18px}.section-title p{margin:3px 0 0;color:var(--muted);font-size:12px}.actions{display:flex;gap:8px;flex-wrap:wrap}.primary{background:linear-gradient(135deg,#68ddcf,#a2b8ff);color:#081320;border:0;font-weight:800}.fineprint{font-size:11px;color:var(--muted);margin-top:28px;max-width:900px}.error{color:var(--red)}@media(max-width:850px){.chartbox{height:300px}.hero,.layout{grid-template-columns:1fr}.grid4{grid-template-columns:repeat(2,minmax(0,1fr))}.foot{grid-template-columns:1fr}}@media(max-width:460px){.wrap{padding:18px 12px 40px}.panel{padding:15px}.grid4{gap:8px}.metric{padding:11px}.metric .value{font-size:20px}.forecast-grid{grid-template-columns:1fr 1fr}.forecast{padding:11px}.forecast .return{font-size:21px}.brand h1{font-size:20px}}
@@ -58,18 +58,47 @@ tbody tr:hover{background:rgba(114,240,209,.045)}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;animation:none!important;transition:none!important}}
 @media(max-width:700px){.wrap{padding-top:15px}.top{align-items:flex-start}.nav-shell{top:5px;margin-bottom:15px;padding:5px;border-radius:13px}.nav-label{display:none}.nav-link{padding:9px 10px}.nav-link .nav-index{display:none}.hero-price{font-size:clamp(38px,11vw,56px)}.panel:hover,.metric:hover,.forecast:hover{transform:none}.back-top{right:12px;bottom:12px}}
 
+/* 4.2 navigation and authorship polish */
+.creator-mark{display:flex;align-items:center;gap:8px;margin-top:9px;color:var(--muted);font-size:10px;letter-spacing:.08em}
+.creator-mark>span:nth-child(2){font-weight:800;letter-spacing:.16em;color:var(--cyan)}
+.creator-mark b{color:var(--text);font-size:12px;letter-spacing:.01em;font-weight:650}
+.creator-dot{width:6px;height:6px;border-radius:50%;background:var(--cyan);box-shadow:0 0 12px rgba(114,240,209,.75)}
+.nav-shell{padding:8px 8px 7px;border-color:rgba(114,240,209,.24);background:linear-gradient(110deg,rgba(12,22,36,.94),rgba(8,14,25,.88) 55%,rgba(26,23,47,.9));box-shadow:0 16px 48px rgba(0,0,0,.3),inset 0 1px rgba(255,255,255,.045)}
+.navbar{gap:6px;scroll-snap-type:x proximity;overscroll-behavior-x:contain;padding:1px 1px 5px}
+.nav-label{display:flex;align-items:center;gap:8px;padding:0 12px 0 8px;border-right:1px solid rgba(145,163,186,.16);margin-right:3px}
+.nav-guide{color:var(--muted);font-size:9px;letter-spacing:.15em}
+.nav-label b{max-width:110px;overflow:hidden;text-overflow:ellipsis;color:var(--text);font-size:11px;letter-spacing:.01em;white-space:nowrap}
+.nav-orbit{width:7px;height:7px;flex:0 0 auto;border-radius:50%;background:var(--cyan);box-shadow:0 0 0 4px rgba(114,240,209,.09),0 0 15px rgba(114,240,209,.75);animation:nav-pulse 2.8s ease-in-out infinite}
+.nav-link{position:relative;scroll-snap-align:center;overflow:hidden;transition:color .2s ease,background .2s ease,border-color .2s ease,transform .2s ease,box-shadow .2s ease}
+.nav-link:after{content:"";position:absolute;left:12px;right:12px;bottom:2px;height:1px;background:linear-gradient(90deg,transparent,var(--cyan),transparent);opacity:0;transform:scaleX(.45);transition:opacity .2s ease,transform .2s ease}
+.nav-link:hover{transform:translateY(-1px);background:rgba(255,255,255,.06)}
+.nav-link.active{background:linear-gradient(135deg,rgba(114,240,209,.13),rgba(156,175,255,.08));border-color:rgba(114,240,209,.28);box-shadow:inset 0 1px rgba(255,255,255,.06),0 4px 18px rgba(52,152,143,.08)}
+.nav-link.active:after{opacity:.9;transform:scaleX(1)}
+.nav-link .nav-index{padding:2px 5px;border-radius:5px;background:rgba(255,255,255,.045);transition:background .2s ease}
+.nav-link.active .nav-index{background:rgba(114,240,209,.12)}
+.progress-track{height:2px;left:10px;right:10px}
+@keyframes nav-pulse{50%{box-shadow:0 0 0 7px rgba(114,240,209,0),0 0 19px rgba(114,240,209,.95)}}
+@media(max-width:700px){
+ .nav-shell{padding:6px 5px 5px}
+ .nav-label{gap:7px;padding:0 9px 0 7px}
+ .nav-guide{display:none}
+ .nav-label b{max-width:82px}
+ .navbar{scroll-padding-inline:8px}
+ .creator-mark{margin-top:7px}
+}
+@media(prefers-reduced-motion:reduce){.nav-orbit{animation:none}.nav-link,.nav-link:after{transition:none}}
 </style>
 </head>
 <body>
 <div class="wrap">
 <header class="top">
- <div class="brand"><div class="mark">₿</div><div><div class="eyebrow">Independent research · v3.0</div><h1>Bitcoin Lab <span style="color:var(--cyan)">/</span> Research Terminal</h1><div class="sub">BTC · EUR · Προβλέψεις με καταγεγραμμένο ιστορικό</div></div></div>
+ <div class="brand"><div class="mark">₿</div><div><div class="eyebrow">Independent research · v4.0</div><h1>Bitcoin Lab <span style="color:var(--cyan)">/</span> Research Terminal</h1><div class="sub">BTC · EUR · Προβλέψεις με καταγεγραμμένο ιστορικό</div><div class="creator-mark"><span class="creator-dot"></span><span>CREATOR</span><b>Νίκος Δεμέτης</b></div></div></div>
  <div class="status" id="status"><span class="dot"></span><span>Έλεγχος δεδομένων…</span></div>
 </header>
 
 <nav class="nav-shell" aria-label="Κύρια πλοήγηση">
  <div class="navbar">
-  <span class="nav-label">Explore</span>
+  <span class="nav-label"><span class="nav-orbit" aria-hidden="true"></span><span class="nav-guide">Explore</span><b id="navCurrent">Overview</b></span>
   <a class="nav-link active" href="#overview"><span class="nav-index">01</span> Overview</a>
   <a class="nav-link" href="#intelligence"><span class="nav-index">02</span> Intelligence</a>
   <a class="nav-link" href="#history"><span class="nav-index">03</span> Price history</a>
@@ -141,7 +170,7 @@ tbody tr:hover{background:rgba(114,240,209,.045)}
 <section class="panel" id="arena" style="margin-top:16px">
  <div class="panel-head"><div><div class="section-kicker">07 / Out-of-sample</div><h2>Model Arena · Walk-forward</h2><div class="sub">Ιστορικές προσομοιώσεις ξεχωριστά από τις πραγματικές προβλέψεις του ledger</div></div><span class="chip">OUT-OF-SAMPLE BY ORIGIN</span></div>
  <div class="note-box" id="arenaStatus">Φόρτωση αποτελεσμάτων walk-forward…</div>
- <div id="arenaTables"></div>
+ <div id="arenaTables"></div>\n <div class="note-box" id="adaptiveStatus" style="margin-top:12px">Φόρτωση adaptive research…</div>\n <div id="adaptiveDetails" class="sub" style="margin-top:10px"></div>
  <p class="fineprint">MAE/RMSE μετρώνται σε log-return. Directional accuracy μετρά μόνο περιπτώσεις με μη μηδενική πραγματική απόδοση· μηδενική πρόβλεψη θεωρείται λανθασμένη κατεύθυνση. Skill = 1 − MAE μοντέλου / MAE zero baseline. Οι καθημερινές προβλέψεις επικαλύπτονται· η ξεχωριστή στήλη μη επικαλυπτόμενου δείγματος μειώνει, αλλά δεν εξαλείφει, τους στατιστικούς περιορισμούς.</p>
 </section>
 <div class="foot">
@@ -154,7 +183,7 @@ tbody tr:hover{background:rgba(114,240,209,.045)}
 <script>
 "use strict";
 const $ = id => document.getElementById(id);
-let latest = null, ledger = {forecasts:[]}, arenaData = null, qualityData = null, prices = [];
+let latest = null, ledger = {forecasts:[]}, arenaData = null, qualityData = null, adaptiveData = null, prices = [];
 const fmtEUR = n => Number.isFinite(n) ? new Intl.NumberFormat("el-GR",{style:"currency",currency:"EUR",maximumFractionDigits:0}).format(n) : "—";
 const fmtPct = n => Number.isFinite(n) ? (n*100).toLocaleString("el-GR",{maximumFractionDigits:2,minimumFractionDigits:2})+"%" : "—";
 const fmtDate = d => d ? new Date(d+"T00:00:00Z").toLocaleDateString("el-GR",{day:"2-digit",month:"short",year:"numeric",timeZone:"UTC"}) : "—";
@@ -227,15 +256,21 @@ function csvDownload(name,rows){const csv=rows.map(r=>r.map(v=>{const s=String(v
 
 function setupNavigation(){
  const links=[...document.querySelectorAll(".nav-link")],targets=links.map(a=>document.querySelector(a.getAttribute("href"))).filter(Boolean),bar=$("scrollProgress"),topButton=$("backTop");
- const setActive=id=>links.forEach(a=>{const active=a.getAttribute("href")==="#"+id;a.classList.toggle("active",active);if(active)a.setAttribute("aria-current","location");else a.removeAttribute("aria-current")});
+ const setActive=id=>{let current=null;links.forEach(a=>{const active=a.getAttribute("href")==="#"+id;a.classList.toggle("active",active);if(active){a.setAttribute("aria-current","location");current=a}else a.removeAttribute("aria-current")});const label=$("navCurrent");if(label&&current)label.textContent=current.textContent.replace(/^[0-9]+\s*/,"").trim()};
  if("IntersectionObserver" in window){const observer=new IntersectionObserver(entries=>{const visible=entries.filter(e=>e.isIntersecting).sort((a,b)=>b.intersectionRatio-a.intersectionRatio)[0];if(visible)setActive(visible.target.id)},{rootMargin:"-20% 0px -62% 0px",threshold:[0,.15,.35,.6]});targets.forEach(t=>observer.observe(t))}
  const updateProgress=()=>{const max=document.documentElement.scrollHeight-window.innerHeight,progress=max>0?Math.min(100,Math.max(0,window.scrollY/max*100)):0;if(bar)bar.style.width=progress+"%";if(topButton)topButton.classList.toggle("visible",window.scrollY>520)};
  window.addEventListener("scroll",updateProgress,{passive:true});updateProgress();
  links.forEach(a=>a.addEventListener("click",()=>{const target=document.querySelector(a.getAttribute("href"));if(target){setActive(target.id);target.setAttribute("tabindex","-1");target.focus({preventScroll:true})}}));
 }
 
-async function init(){latest=await loadJSON("data/latest.json",{prices:[],status:"not_updated"});ledger=await loadJSON("data/forecasts.json",{forecasts:[]});arenaData=await loadJSON("data/model_arena.json",null);qualityData=await loadJSON("data/quality_report.json",null);prices=Array.isArray(latest.prices)?latest.prices.filter(p=>Number.isFinite(p.close)&&p.close>0):[];if(prices.length){const last=prices[prices.length-1],prev=prices[prices.length-2];$("price").textContent=fmtEUR(last.close);$("priceDate").textContent=fmtDate(last.date);$("change24").textContent=prev?fmtPct(last.close/prev.close-1):"—";$("change24").style.color=prev&&last.close>=prev.close?"var(--green)":"var(--red)";$("sampleCount").textContent=prices.length.toLocaleString("el-GR");$("freshness").firstChild.textContent="Πηγή: "+(latest.source||"Άγνωστη")+" · Τελευταία ενημέρωση UTC: "+(latest.last_updated||"άγνωστη")+" · ";$("sourceChip").textContent=(latest.source||"MARKET DATA").toUpperCase();setStatus(latest.status==="ok","Δεδομένα φορτώθηκαν · "+fmtDate(last.date));}else{setStatus(false,"Δεν υπάρχουν δεδομένα — εκτέλεσε το workflow");$("sourceStatus").textContent="Δεν βρέθηκε data/latest.json με ιστορικές τιμές."}
-draw($("miniChart"),prices.slice(-90),true);draw($("priceChart"),prices.slice(-Number($("range").value)));renderForecasts();metrics();renderLedger();renderMarketIntelligence();renderArena();renderQuality();calcInteractive();}
+function renderAdaptive(){
+ const status=$("adaptiveStatus"),details=$("adaptiveDetails");
+ if(!adaptiveData||!adaptiveData.horizons){status.textContent="Δεν υπάρχει διαθέσιμη αναφορά adaptive research. Το ενεργό μοντέλο παραμένει αμετάβλητο.";details.textContent="";return}
+ status.textContent="Αξιολογήθηκαν "+Number(adaptiveData.matured_live_forecasts_evaluated||0)+" ώριμες επιλέξιμες πραγματικές προβλέψεις. Η διαδικασία δεν αλλάζει αυτόματα το ενεργό μοντέλο.";
+ details.innerHTML=[30,90].map(h=>{const x=adaptiveData.horizons[String(h)]||{},c=x.candidates?.expanding_mean_v1||{};const eligible=c.recommendation==="eligible_for_human_review";return '<div class="metric" style="display:inline-block;vertical-align:top;margin:5px;min-width:220px"><div class="label">'+h+' ημέρες · '+(x.non_overlapping_n||0)+' μη επικαλυπτόμενες δοκιμές</div><div class="value" style="font-size:15px">'+(eligible?"Υποψήφιο για ανθρώπινο έλεγχο":"Διατήρηση τρέχοντος μοντέλου")+'</div><div class="note">Ιστορική MAE: '+(Number.isFinite(c.mae_log_return)?(c.mae_log_return*100).toFixed(2)+"%":"—")+' · κέρδος έναντι τρέχοντος: '+(Number.isFinite(c.relative_mae_gain_vs_current)?(c.relative_mae_gain_vs_current*100).toFixed(1)+"%":"—")+'</div><div class="note">Ledger ('+(x.matured_live_evaluation?.n||0)+' ώριμες): MAE ενεργού μοντέλου '+(Number.isFinite(x.matured_live_evaluation?.model_mae_log_return)?(x.matured_live_evaluation.model_mae_log_return*100).toFixed(2)+"%":"—")+' · μηδενικής βάσης '+(Number.isFinite(x.matured_live_evaluation?.zero_baseline_mae_log_return)?(x.matured_live_evaluation.zero_baseline_mae_log_return*100).toFixed(2)+"%":"—")+'</div></div>'}).join("");
+}
+async function init(){latest=await loadJSON("data/latest.json",{prices:[],status:"not_updated"});ledger=await loadJSON("data/forecasts.json",{forecasts:[]});arenaData=await loadJSON("data/model_arena.json",null);qualityData=await loadJSON("data/quality_report.json",null);adaptiveData=await loadJSON("data/adaptive_research.json",null);prices=Array.isArray(latest.prices)?latest.prices.filter(p=>Number.isFinite(p.close)&&p.close>0):[];if(prices.length){const last=prices[prices.length-1],prev=prices[prices.length-2];$("price").textContent=fmtEUR(last.close);$("priceDate").textContent=fmtDate(last.date);$("change24").textContent=prev?fmtPct(last.close/prev.close-1):"—";$("change24").style.color=prev&&last.close>=prev.close?"var(--green)":"var(--red)";$("sampleCount").textContent=prices.length.toLocaleString("el-GR");$("freshness").firstChild.textContent="Πηγή: "+(latest.source||"Άγνωστη")+" · Τελευταία ενημέρωση UTC: "+(latest.last_updated||"άγνωστη")+" · ";$("sourceChip").textContent=(latest.source||"MARKET DATA").toUpperCase();setStatus(latest.status==="ok","Δεδομένα φορτώθηκαν · "+fmtDate(last.date));}else{setStatus(false,"Δεν υπάρχουν δεδομένα — εκτέλεσε το workflow");$("sourceStatus").textContent="Δεν βρέθηκε data/latest.json με ιστορικές τιμές."}
+draw($("miniChart"),prices.slice(-90),true);draw($("priceChart"),prices.slice(-Number($("range").value)));renderForecasts();metrics();renderLedger();renderMarketIntelligence();renderArena();renderQuality();renderAdaptive();calcInteractive();}
 $("horizon").addEventListener("change",()=>{renderForecasts();metrics();calcInteractive()});$("range").addEventListener("change",()=>draw($("priceChart"),prices.slice(-Number($("range").value))));["lambda","gamma","cost","lookback"].forEach(id=>$(id).addEventListener("input",calcInteractive));$("exportPrices").addEventListener("click",()=>csvDownload("bitcoin-lab-btc-eur-prices.csv",[["date","close_eur"],...prices.map(p=>[p.date,p.close])]));$("exportForecasts").addEventListener("click",()=>{const fs=ledger.forecasts||[];csvDownload("bitcoin-lab-forecast-ledger.csv",[["id","origin_date","target_date","horizon_days","model","predicted_log_return","risk_adjusted_score","realized_log_return","status"],...fs.map(f=>[f.id,f.origin_date,f.target_date,f.horizon_days,f.model,f.predicted_log_return,f.risk_adjusted_score,f.realized_log_return,f.status])])});window.addEventListener("resize",()=>{draw($("miniChart"),prices.slice(-90),true);draw($("priceChart"),prices.slice(-Number($("range").value)))});$("backTop").addEventListener("click",()=>window.scrollTo({top:0,behavior:matchMedia("(prefers-reduced-motion: reduce)").matches?"auto":"smooth"}));setupNavigation();init();
 </script>
 </body></html>

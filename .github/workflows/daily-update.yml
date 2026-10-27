@@ -37,7 +37,7 @@ jobs:
       - name: Run deterministic tests
         run: python -m unittest discover -s tests -v
       - name: Compile Python modules
-        run: python -m py_compile scripts/update_lab.py scripts/model_arena.py scripts/research_sentinel.py
+        run: python -m py_compile scripts/update_lab.py scripts/model_arena.py scripts/research_sentinel.py scripts/adaptive_research.py
       - name: Validate dashboard JavaScript syntax
         run: |
           python - <<'PY'
@@ -95,12 +95,14 @@ jobs:
         run: python scripts/research_sentinel.py
       - name: Build walk-forward model arena
         run: python scripts/model_arena.py
+      - name: Run adaptive research loop
+        run: python scripts/adaptive_research.py
       - name: Validate generated JSON artifacts
         run: |
           python - <<'PY'
           import json
           from pathlib import Path
-          for name in ("latest.json", "forecasts.json", "model_arena.json", "quality_report.json"):
+          for name in ("latest.json", "forecasts.json", "model_arena.json", "quality_report.json", "adaptive_research.json"):
               path = Path("data") / name
               json.loads(path.read_text(encoding="utf-8"))
               print("valid JSON:", path)
@@ -109,7 +111,7 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add data/latest.json data/forecasts.json data/model_arena.json data/quality_report.json
+          git add data/latest.json data/forecasts.json data/model_arena.json data/quality_report.json data/adaptive_research.json
           if git diff --cached --quiet; then
             echo "No data changes to commit."
           else

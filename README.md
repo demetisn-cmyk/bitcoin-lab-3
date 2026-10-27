@@ -69,13 +69,21 @@ The updater now fails closed on malformed persistent JSON, validates incoming pr
 
 The registered model set is deliberately small and fixed. The arena records model definitions, uses exact target dates, rejects origins with gaps in the assumed daily-return window, and chooses non-overlapping origins by calendar date. A zero-return baseline's directional accuracy is shown as unavailable because it does not predict a direction. No candidate is promoted automatically and the production model is not changed by experimental results.
 
+## Adaptive research loop
+
+`scripts/adaptive_research.py` scores matured, eligible live forecasts separately from historical walk-forward simulations. The historical comparison uses the first 60% of prices as an initial training period; later validation origins are spaced by the forecast horizon. Each prediction uses prices through its origin only, and requires exact calendar targets and consecutive daily prices.
+
+The fixed expanding-mean candidate is compared with the active shrunk-mean model and the zero-return baseline. It is only marked eligible for human review after at least 30 non-overlapping validation origins, at least 5% lower MAE than both comparators, and a one-sided paired sign test at p ≤ 0.05 against each. Insufficient data or evidence retains the current model. Model versions, matured forecast scores and experiment results are written to `data/adaptive_research.json`; the loop never changes the forecast ledger or promotes a model automatically.
+
+Historical simulations are not forecasts actually issued at those dates. Non-overlapping origins reduce dependence but do not remove it, and passing the evidence gate does not establish future performance.
+
 ## Validation
 
 Run the deterministic test suite and syntax checks locally:
 
     python -m unittest discover -s tests -v
-    python -m py_compile scripts/update_lab.py scripts/model_arena.py scripts/research_sentinel.py
+    python -m py_compile scripts/update_lab.py scripts/model_arena.py scripts/research_sentinel.py scripts/adaptive_research.py
     python scripts/research_sentinel.py
     python scripts/model_arena.py
 
-The daily workflow also checks dashboard JavaScript syntax, runs the test suite, runs the data-quality sentinel, then builds the Model Arena. Historical data and all original forecast records are retained. This project remains an educational research lab, not a source of investment advice or evidence of a profitable trading strategy.
+The daily workflow also checks dashboard JavaScript syntax, runs the test suite, runs the data-quality sentinel, then builds the Model Arena and adaptive research report. Historical data and all original forecast records are retained. This project remains an educational research lab, not a source of investment advice or evidence of a profitable trading strategy.
