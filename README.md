@@ -78,4 +78,4 @@ Run the deterministic test suite and syntax checks locally:
     python scripts/research_sentinel.py
     python scripts/model_arena.py
 
-The daily workflow also checks dashboard JavaScript syntax, runs the test suite, runs the data-quality sentinel, then builds the Model Arena. Historical data and all original forecast records are retained. This project remains an educational research lab, not a source of investment advice or evidence of a profitable trading strategy.
+The daily workflow also checks dashboard JavaScript syntax, runs the test suite, runs the data-quality sentinel, then builds the Model Arena and adaptive research report. Historical data and all original forecast records are retained. This project remains an educational research lab, not a source of investment advice or evidence of a profitable trading strategy.
