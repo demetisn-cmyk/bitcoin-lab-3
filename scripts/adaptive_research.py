@@ -181,6 +181,21 @@ def main():
     prices = json.loads(PRICES_PATH.read_text(encoding="utf-8"))
     ledger = json.loads(LEDGER_PATH.read_text(encoding="utf-8"))
     result = run(prices, ledger)
+    history = []
+    try:
+        previous = json.loads(OUTPUT_PATH.read_text(encoding="utf-8"))
+        history = previous.get("experiment_history", [])
+        if not isinstance(history, list):
+            history = []
+    except FileNotFoundError:
+        pass
+    history.append({
+        "generated_at_utc": result["generated_at_utc"],
+        "horizons": result["horizons"],
+        "matured_live_forecasts_evaluated": result["matured_live_forecasts_evaluated"],
+        "model_versions": result["model_versions"],
+    })
+    result["experiment_history"] = history[-365:]
     OUTPUT_PATH.write_text(json.dumps(result, indent=2) + "\n", encoding="utf-8")
 
 
