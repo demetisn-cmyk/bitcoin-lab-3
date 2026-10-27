@@ -95,7 +95,7 @@ jobs:
         run: python scripts/research_sentinel.py
       - name: Build walk-forward model arena
         run: python scripts/model_arena.py
-      - name: Validate generated JSON artifacts
+      - name: Run adaptive research loop\n        run: python scripts/adaptive_research.py\n      - name: Validate generated JSON artifacts
         run: |
           python - <<'PY'
           import json
