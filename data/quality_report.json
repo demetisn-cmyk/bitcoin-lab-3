@@ -1,14 +1,14 @@
 {
   "schema_version": 1,
   "status": "warn",
-  "generated_at_utc": "2026-10-26T21:00:26+00:00",
-  "data_date": "2026-10-25",
+  "generated_at_utc": "2026-10-27T05:44:48+00:00",
+  "data_date": "2026-10-26",
   "source": "Kraken",
   "historical_observation_provenance": "unknown_before_observation_level_tracking",
   "checks": {
     "price_observations": 720,
     "valid_price_observations": 720,
-    "forecast_records": 6,
+    "forecast_records": 8,
     "max_staleness_days": 3,
     "implausible_jump_warning_threshold": 0.25
   },
