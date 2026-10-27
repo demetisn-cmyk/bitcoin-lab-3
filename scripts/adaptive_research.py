@@ -124,6 +124,21 @@ def _evaluate(prices, horizon):
     }
 
 
+def _matured_summary(records, horizon):
+    rows = [r for r in records if r.get("horizon_days") == horizon]
+    pairs = [(float(r["predicted_log_return"]), float(r["realized_log_return"]))
+             for r in rows if isinstance(r.get("predicted_log_return"), (int, float))
+             and isinstance(r.get("realized_log_return"), (int, float))]
+    if not pairs:
+        return {"n": 0, "model_mae_log_return": None, "zero_baseline_mae_log_return": None,
+                "skill_vs_zero_mae": None}
+    model_mae = statistics.fmean(abs(pred - actual) for pred, actual in pairs)
+    zero_mae = statistics.fmean(abs(actual) for _, actual in pairs)
+    return {"n": len(pairs), "model_mae_log_return": model_mae,
+            "zero_baseline_mae_log_return": zero_mae,
+            "skill_vs_zero_mae": 1 - model_mae / zero_mae if zero_mae > 0 else None}
+
+
 def run(prices_payload, ledger_payload, generated_at=None):
     prices = _prices(prices_payload)
     matured = [r for r in ledger_payload.get("forecasts", [])
@@ -143,8 +158,15 @@ def run(prices_payload, ledger_payload, generated_at=None):
             "maximum_one_sided_paired_sign_test_p": MAX_SIGN_TEST_P,
             "promotion_mode": "recommendation_only; production model and forecast ledger are never changed",
         },
-        "model_versions": [{"model": CURRENT_MODEL, "version": CURRENT_VERSION, "status": "active"}],
-        "horizons": {str(h): _evaluate(prices, h) for h in HORIZONS},
+        "model_versions": [
+            {"model": CURRENT_MODEL, "version": CURRENT_VERSION, "status": "active"},
+            {"model": "expanding_mean_v1", "version": "1.0", "status": "research_candidate"},
+        ],
+        "horizons": {
+            str(h): {**_evaluate(prices, h),
+                     "matured_live_evaluation": _matured_summary(matured, h)}
+            for h in HORIZONS
+        },
         "limitations": [
             "Historical validation is a simulation, not forecasts actually issued at those origins.",
             "Overlapping outcomes are reduced by horizon spacing but market dependence remains.",
