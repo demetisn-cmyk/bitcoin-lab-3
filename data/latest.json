@@ -4,12 +4,8 @@
   "source_switch_detected": false,
   "historical_observation_provenance": "unknown_before_observation_level_tracking",
   "currency": "EUR",
-  "last_updated": "2026-10-29T05:54:08+00:00",
+  "last_updated": "2026-10-30T05:55:21+00:00",
   "prices": [
-    {
-      "date": "2024-11-08",
-      "close": 71456.5
-    },
     {
       "date": "2024-11-09",
       "close": 71565.6
@@ -2885,6 +2881,10 @@
     {
       "date": "2026-10-28",
       "close": 72872.3
+    },
+    {
+      "date": "2026-10-29",
+      "close": 69587.6
     }
   ],
   "status": "ok"
