@@ -14,6 +14,7 @@ on:
       - ".github/workflows/daily-update.yml"
   schedule:
     - cron: "17 5 * * *"
+    - cron: "17 11 * * *"
 
 permissions:
   contents: write
@@ -118,3 +119,4 @@ jobs:
             git commit -m "chore: refresh BTC/EUR research data"
             git push
           fi
+
