@@ -92,37 +92,49 @@ tbody tr:hover{background:rgba(114,240,209,.045)}
 .pulse-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin:16px 0}.pulse-card{min-height:126px;padding:17px;border:1px solid rgba(125,158,194,.16);border-radius:15px;background:linear-gradient(145deg,rgba(16,27,44,.96),rgba(9,16,28,.96));transition:transform .2s ease,border-color .2s ease}.pulse-card:hover{transform:translateY(-2px);border-color:rgba(114,240,209,.35)}.pulse-card .label{font-size:12px;color:var(--muted)}.pulse-card .value{margin:12px 0 4px;font-size:clamp(19px,2vw,26px);font-weight:760;letter-spacing:-.04em;font-variant-numeric:tabular-nums}.pulse-card .note{font-size:11px;color:var(--muted)}
 .market-section{display:grid;grid-template-columns:1.3fr .9fr;gap:16px;margin-top:16px}.tape-chart{height:210px}.heatmap{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:7px}.heat-cell{min-height:64px;padding:9px 8px;border-radius:10px;background:#152235;border:1px solid rgba(255,255,255,.045)}.heat-cell b{display:block;font-size:12px}.heat-cell span{display:block;margin-top:5px;font-size:12px;font-variant-numeric:tabular-nums}.market-kicker{display:flex;align-items:center;gap:8px}.fresh-dot{width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 12px rgba(130,230,180,.55)}
 @media(max-width:850px){.pulse-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.market-section{grid-template-columns:1fr}.heatmap{grid-template-columns:repeat(4,minmax(0,1fr))}}@media(max-width:460px){.pulse-grid{gap:8px}.pulse-card{min-height:112px;padding:12px}.heatmap{grid-template-columns:repeat(3,minmax(0,1fr))}}
+/* Visual direction: a bright, editorial observatory around one deep-market hero. */
+:root{color-scheme:light;--bg:#f2f5f3;--panel:#ffffff;--panel2:#f8faf8;--line:#dbe4df;--text:#182b32;--muted:#64777d;--cyan:#087e72;--blue:#3b69ad;--amber:#b77813;--red:#c04452;--green:#14764f;--radius:18px}
+body{background:radial-gradient(ellipse at 12% -12%,rgba(108,180,163,.18),transparent 35%),radial-gradient(rgba(24,62,55,.08) .65px,transparent .65px),var(--bg);background-size:auto,20px 20px,auto;color:var(--text)}
+.wrap{max-width:1460px;padding-top:26px}.top{padding:4px 4px 18px;border-bottom:1px solid rgba(24,62,55,.12)}.eyebrow{color:#16796e;letter-spacing:.14em}.brand h1{color:#172f36}.sub{color:#65777d}.mark{background:linear-gradient(135deg,#f3bb58,#ffe3a6);color:#29220f;box-shadow:0 7px 20px rgba(193,138,46,.2)}
+.hero{grid-template-columns:1.5fr 1fr;gap:18px}.hero>.panel{border-radius:22px}.hero>.panel:first-child{background:radial-gradient(ellipse at 82% 16%,rgba(107,229,200,.2),transparent 37%),linear-gradient(132deg,#0d2a35,#123e47 58%,#192c42);border-color:#284c54;color:#f4faf8;box-shadow:0 26px 70px rgba(25,57,61,.2)}.hero>.panel:first-child .sub,.hero>.panel:first-child .meta{color:#afc9c6}.hero>.panel:first-child .meta b{color:#fff}.hero-price{color:#fff;font-size:clamp(46px,6vw,76px)}.hero>.panel:first-child .section-kicker{color:#82e3d1}.hero>.panel:first-child .chip{background:rgba(135,231,211,.12);border-color:rgba(135,231,211,.22);color:#a2f1df}
+.panel{background:rgba(255,255,255,.96);border-color:#dce5e0;box-shadow:0 12px 36px rgba(23,55,48,.065)}.panel:hover{border-color:#b4cec4;box-shadow:0 18px 45px rgba(23,55,48,.09)}.panel h2{color:#1c343a;font-size:17px}.panel .sub{color:#6a7c80}.section-kicker{color:#237e70;letter-spacing:.11em}.chip{background:#eaf4ef;border:1px solid #d4e8df;color:#247264;letter-spacing:.03em}.status{background:#fff;border-color:#dbe4df;color:#475e60;backdrop-filter:none}.dot{background:#bc8424}
+.nav-shell{background:linear-gradient(105deg,#122b36,#183b43 58%,#233749);border-color:#31525a;box-shadow:0 14px 32px rgba(20,48,53,.16);border-radius:15px}.nav-label{color:#a9c1c0;border-color:rgba(235,248,244,.17)}.nav-guide{color:#a9c1c0}.nav-label b{color:#f5faf8}.nav-link{color:#ccdad7}.nav-link .nav-index{color:#9bb2ae;background:rgba(255,255,255,.06)}.nav-link:hover{color:#fff;background:rgba(255,255,255,.08)}.nav-link.active{color:#b7f0e1;background:rgba(128,226,202,.13);border-color:rgba(160,235,216,.26)}.nav-link.active .nav-index{color:#c5f6e8;background:rgba(128,226,202,.14)}
+.pulse-card,.metric,.forecast{background:#fff;border-color:#dce6e0;box-shadow:0 5px 18px rgba(25,58,48,.035)}.pulse-card{border-radius:16px}.pulse-card:first-child{background:linear-gradient(145deg,#fff,#f0f8f4)}.pulse-card .label,.metric .label{color:#65787c}.pulse-card .value,.metric .value{color:#19343a}.pulse-card .note,.metric .note{color:#677a7c}.metric:hover,.forecast:hover{border-color:#b8d6c9}.forecast{border-radius:15px}.forecast .days,.forecast .small{color:#687a7d}
+button,select,input{background:#fff;color:#20363b;border-color:#cedbd5}button:hover{background:#f2f7f4;border-color:#559688}.primary{background:linear-gradient(135deg,#087e72,#1d9d88);color:#fff;box-shadow:0 8px 20px rgba(8,126,114,.16)}.controls label{color:#586f72}.controls .sub{color:#748487}
+.chartbox{border-radius:14px}.legend{color:#63777a}.legend span:before{background:#147e72}.legend span:nth-child(2):before{background:#5479b3}.tablewrap{border-color:#dce5e0}table{color:#20363b}th{color:#5e7375;background:#f2f6f4}td{color:#263d41;border-bottom-color:#e4ebe7}tbody tr:hover{background:#eff7f2}.note-box{background:#f7faf8;border-color:#dce5e0;color:#586f72}.notice{background:#fff7e8;border-color:#ead6ad;color:#77561f}.signal.pos{background:#e3f4eb;color:#21784e}.signal.neg{background:#fbecef;color:#b34250}.signal.neutral{background:#f5efdF;color:#986a1c}.heat-cell{border-color:rgba(33,65,54,.1);box-shadow:0 3px 10px rgba(26,61,47,.035)}.fineprint{color:#6c7d7f}.back-top{background:#173943;border-color:#3c6a6a;color:#c2f2e5}
+.creator-mark{color:#687c7d}.creator-mark b{color:#233c3f}.creator-mark>span:nth-child(2){color:#247d70}.creator-dot{background:#178879;box-shadow:0 0 10px rgba(23,136,121,.45)}
+@media(max-width:850px){.hero{grid-template-columns:1fr}.hero-price{font-size:clamp(46px,10vw,68px)}}@media(prefers-reduced-motion:reduce){.nav-orbit,.mark:after{animation:none}}
 </style>
 </head>
 <body>
 <div class="wrap">
 <header class="top">
- <div class="brand"><div class="mark">₿</div><div><div class="eyebrow">Independent research · v4.0</div><h1>Bitcoin Lab <span style="color:var(--cyan)">/</span> Research Terminal</h1><div class="sub">BTC · EUR · Προβλέψεις με καταγεγραμμένο ιστορικό</div><div class="creator-mark"><span class="creator-dot"></span><span>CREATOR</span><b>Νίκος Δεμέτης</b></div></div></div>
+ <div class="brand"><div class="mark">₿</div><div><div class="eyebrow">Ανεξάρτητη έρευνα · v4.0</div><h1>Παρατηρητήριο Bitcoin <span style="color:var(--cyan)">/</span> BTC · EUR</h1><div class="sub">Αγορά, ιστορικό και πειραματικές προβλέψεις</div><div class="creator-mark"><span class="creator-dot"></span><span>ΔΗΜΙΟΥΡΓΟΣ</span><b>Νίκος Δεμέτης</b></div></div></div>
  <div class="status" id="status"><span class="dot"></span><span>Έλεγχος δεδομένων…</span></div>
 </header>
 
 <nav class="nav-shell" aria-label="Κύρια πλοήγηση">
  <div class="navbar">
-  <span class="nav-label"><span class="nav-orbit" aria-hidden="true"></span><span class="nav-guide">Explore</span><b id="navCurrent">Overview</b></span>
-  <a class="nav-link active" href="#overview"><span class="nav-index">01</span> Overview</a>
-  <a class="nav-link" href="#intelligence"><span class="nav-index">02</span> Intelligence</a>
-  <a class="nav-link" href="#market-map"><span class="nav-index">03</span> Market map</a>
-  <a class="nav-link" href="#history"><span class="nav-index">04</span> Price history</a>
-  <a class="nav-link" href="#controls"><span class="nav-index">05</span> Lab controls</a>
-  <a class="nav-link" href="#forecast-ledger"><span class="nav-index">06</span> Forecast ledger</a>
-  <a class="nav-link" href="#quality"><span class="nav-index">07</span> Data quality</a>
-  <a class="nav-link" href="#arena"><span class="nav-index">08</span> Model arena</a>
+  <span class="nav-label"><span class="nav-orbit" aria-hidden="true"></span><span class="nav-guide">Πλοήγηση</span><b id="navCurrent">Επισκόπηση</b></span>
+  <a class="nav-link active" href="#overview"><span class="nav-index">01</span> Επισκόπηση</a>
+  <a class="nav-link" href="#intelligence"><span class="nav-index">02</span> Ανάλυση</a>
+  <a class="nav-link" href="#market-map"><span class="nav-index">03</span> Χάρτης αγοράς</a>
+  <a class="nav-link" href="#history"><span class="nav-index">04</span> Ιστορική πορεία</a>
+  <a class="nav-link" href="#controls"><span class="nav-index">05</span> Ρυθμίσεις έρευνας</a>
+  <a class="nav-link" href="#forecast-ledger"><span class="nav-index">06</span> Αρχείο προβλέψεων</a>
+  <a class="nav-link" href="#quality"><span class="nav-index">07</span> Ποιότητα δεδομένων</a>
+  <a class="nav-link" href="#arena"><span class="nav-index">08</span> Δοκιμές μοντέλων</a>
  </div>
  <div class="progress-track" aria-hidden="true"><div class="progress-bar" id="scrollProgress"></div></div>
 </nav>
 <section class="hero" id="overview">
  <article class="panel">
-  <div class="panel-head"><div><div class="section-kicker">The market, in context</div><h2>Bitcoin / Euro</h2><div class="sub" id="priceContext">Αγορά BTC/EUR · ενημέρωση πηγής</div></div><span class="chip" id="sourceChip">MARKET DATA</span></div>
+  <div class="panel-head"><div><div class="section-kicker">Η αγορά με μια ματιά</div><h2>Bitcoin / Ευρώ</h2><div class="sub" id="priceContext">Αγορά BTC/EUR · ενημέρωση πηγής</div></div><span class="chip" id="sourceChip">ΔΕΔΟΜΕΝΑ ΑΓΟΡΑΣ</span></div>
   <div class="hero-price" id="price">—</div><div class="meta"><span>Τελευταίο στοιχείο <b id="priceDate">—</b></span><span>24h <b id="change24">—</b></span><span>Ημερήσια δείγματα <b id="sampleCount">—</b></span></div>
   <div style="height:15px"></div><div class="chartbox" style="height:180px"><canvas id="miniChart" aria-label="Γράφημα ιστορικής τιμής BTC/EUR"></canvas></div><div class="sub">Το γράφημα δείχνει ημερήσια κλεισίματα· η τιμή επάνω είναι το πιο πρόσφατο spot στιγμιότυπο.</div>
  </article>
  <article class="panel">
-  <div class="panel-head"><div><h2>Forecast engine</h2><div class="sub">Σήμα μοντέλου, όχι εντολή συναλλαγής</div></div><span class="chip">30D / 90D</span></div>
+  <div class="panel-head"><div><h2>Πειραματική πρόβλεψη</h2><div class="sub">Ένδειξη μοντέλου, όχι οδηγία συναλλαγής</div></div><span class="chip">30 / 90 ΗΜΕΡΕΣ</span></div>
   <div class="controls"><label for="horizon">Ορίζοντας</label><select id="horizon"><option value="30">30 ημέρες</option><option value="90">90 ημέρες</option></select></div>
   <div style="height:14px"></div><div class="forecast-grid" id="forecastCards"><div class="empty">Φόρτωση προβλέψεων…</div></div>
   <div class="note-box" style="margin-top:12px">Η εκτίμηση βασίζεται σε συρρικνωμένο ιστορικό μέσο ημερήσιων log-returns. Η αβεβαιότητα παραμένει υψηλή και το μοντέλο μπορεί να αποδίδει χειρότερα από μηδενική πρόβλεψη.</div>
@@ -135,13 +147,13 @@ tbody tr:hover{background:rgba(114,240,209,.045)}
  <article class="pulse-card"><div class="label">Τελευταία ενδοημερήσια ενημέρωση</div><div class="value" id="intradayUpdated">—</div><div class="note" id="intradayNote">Ανεξάρτητη από το ημερήσιο κλείσιμο</div></article>
 </section>
 <div class="grid4">
- <div class="metric"><div class="label">Matured forecasts · selected horizon</div><div class="value" id="matured">—</div><div class="note">Αποτελέσματα που έχουν ωριμάσει</div></div>
- <div class="metric"><div class="label">MAE · model</div><div class="value" id="mae">—</div><div class="note">Μέσο απόλυτο σφάλμα log-return</div></div>
- <div class="metric"><div class="label">MAE · zero baseline</div><div class="value" id="zeroMae">—</div><div class="note">Πρόβλεψη μηδενικής απόδοσης</div></div>
- <div class="metric"><div class="label">Lower absolute error vs zero</div><div class="value" id="beats">—</div><div class="note">Ποσοστό ώριμων προβλέψεων με μικρότερο απόλυτο σφάλμα από το zero baseline</div></div>
+ <div class="metric"><div class="label">Ώριμες προβλέψεις · επιλεγμένος ορίζοντας</div><div class="value" id="matured">—</div><div class="note">Προβλέψεις με διαθέσιμο αποτέλεσμα</div></div>
+ <div class="metric"><div class="label">Μέσο απόλυτο σφάλμα · μοντέλο</div><div class="value" id="mae">—</div><div class="note">Σφάλμα σε log-return</div></div>
+ <div class="metric"><div class="label">Μέσο απόλυτο σφάλμα · μηδενική βάση</div><div class="value" id="zeroMae">—</div><div class="note">Απλή πρόβλεψη μηδενικής απόδοσης</div></div>
+ <div class="metric"><div class="label">Μικρότερο σφάλμα από τη μηδενική βάση</div><div class="value" id="beats">—</div><div class="note">Ποσοστό ώριμων προβλέψεων που την ξεπέρασαν</div></div>
 </div>
 <section class="panel" id="intelligence" style="margin-top:16px">
- <div class="panel-head"><div><div class="section-kicker">02 / Market context</div><h2>Market intelligence</h2><div class="sub">Μετρήσεις που υπολογίζονται από το διαθέσιμο ιστορικό κλεισιμάτων — όχι live order-book στοιχεία</div></div><span class="chip">QUANT SNAPSHOT</span></div>
+ <div class="panel-head"><div><div class="section-kicker">02 / Εικόνα αγοράς</div><h2>Μετρήσεις ιστορικού</h2><div class="sub">Υπολογισμοί από τα διαθέσιμα ημερήσια κλεισίματα, όχι ζωντανά στοιχεία βιβλίου εντολών</div></div><span class="chip">ΙΣΤΟΡΙΚΑ ΔΕΔΟΜΕΝΑ</span></div>
  <div class="grid4" style="margin:0">
   <div class="metric"><div class="label">7D return</div><div class="value" id="ret7d">—</div><div class="note">Μεταβολή τελευταίων 7 ημερήσιων διαστημάτων</div></div>
   <div class="metric"><div class="label">30D return</div><div class="value" id="ret30d">—</div><div class="note">Μεταβολή σε 30 ημερολογιακές ημέρες</div></div>
@@ -158,16 +170,16 @@ tbody tr:hover{background:rgba(114,240,209,.045)}
  </div>
 </section>
 <section class="market-section" id="market-map">
- <article class="panel"><div class="panel-head"><div><div class="section-kicker">Monthly rhythm</div><h2>Ημερολόγιο αποδόσεων</h2><div class="sub">Μηνιαίες μεταβολές από ημερήσια κλεισίματα · ο τρέχων μήνας είναι μερικός</div></div><span class="chip">BTC / EUR</span></div><div class="heatmap" id="monthlyHeatmap" aria-live="polite"></div><div class="legend"><span>Θετική απόδοση</span><span>Αρνητική απόδοση</span></div></article>
- <article class="panel"><div class="panel-head"><div><div class="section-kicker">Intraday tape</div><h2>Κίνηση τελευταίων ωρών</h2><div class="sub" id="hourlyContext">Ολοκληρωμένα ωριαία κεριά Kraken · δεν αποτελούν ημερήσια πρόβλεψη</div></div><span class="chip">1H CLOSE</span></div><div class="chartbox tape-chart"><canvas id="hourlyChart" aria-label="Ωριαίες τιμές BTC EUR"></canvas></div><div class="legend"><span>Ωριαίο κλείσιμο</span></div></article>
+ <article class="panel"><div class="panel-head"><div><div class="section-kicker">Μηνιαία εικόνα</div><h2>Ημερολόγιο αποδόσεων</h2><div class="sub">Μεταβολές από ημερήσια κλεισίματα · ο τρέχων μήνας είναι μερικός</div></div><span class="chip">BTC / EUR</span></div><div class="heatmap" id="monthlyHeatmap" aria-live="polite"></div><div class="legend"><span>Θετική απόδοση</span><span>Αρνητική απόδοση</span></div></article>
+ <article class="panel"><div class="panel-head"><div><div class="section-kicker">Ενδοημερήσια κίνηση</div><h2>Οι τελευταίες ώρες</h2><div class="sub" id="hourlyContext">Ολοκληρωμένα ωριαία κεριά Kraken · δεν αποτελούν ημερήσια πρόβλεψη</div></div><span class="chip">ΚΛΕΙΣΙΜΟ 1 ΩΡΑΣ</span></div><div class="chartbox tape-chart"><canvas id="hourlyChart" aria-label="Ωριαίες τιμές BTC EUR"></canvas></div><div class="legend"><span>Ωριαίο κλείσιμο</span></div></article>
 </section>
 <section class="layout" id="history">
  <article class="panel">
-  <div class="panel-head"><div><div class="section-kicker">03 / Price discovery</div><h2>Ιστορική πορεία</h2><div class="sub">Επιλεγμένο παράθυρο ημερήσιων τιμών</div></div><div class="controls"><select id="range" aria-label="Εύρος γραφήματος"><option value="90">90D</option><option value="180">180D</option><option value="365" selected>1Y</option><option value="730">2Y</option></select></div></div>
+  <div class="panel-head"><div><div class="section-kicker">04 / Ιστορικό αγοράς</div><h2>Η πορεία της τιμής</h2><div class="sub">Επιλεγμένο διάστημα ημερήσιων τιμών</div></div><div class="controls"><select id="range" aria-label="Εύρος γραφήματος"><option value="90">90 ημέρες</option><option value="180">180 ημέρες</option><option value="365" selected>1 έτος</option><option value="730">2 έτη</option></select></div></div>
   <div class="chartbox"><canvas id="priceChart" aria-label="Γράφημα τιμής BTC/EUR"></canvas></div><div class="legend"><span>Τιμή BTC/EUR</span></div>
  </article>
  <article class="panel" id="controls">
-  <div class="panel-head"><div><div class="section-kicker">04 / Experiment</div><h2>Research controls</h2><div class="sub">Διαδραστική δοκιμή του risk-adjusted score</div></div><span class="chip">EXPLORATORY</span></div>
+  <div class="panel-head"><div><div class="section-kicker">05 / Δοκιμή παραμέτρων</div><h2>Εργαστήριο σεναρίων</h2><div class="sub">Πειραματικός υπολογισμός προσαρμοσμένου σκορ κινδύνου</div></div><span class="chip">ΔΟΚΙΜΑΣΤΙΚΟ</span></div>
   <div style="display:grid;gap:15px">
    <label>λ · downside-tail penalty <div class="controls"><input id="lambda" type="number" min="0" max="5" step=".1" value="1"><span class="sub">Μεγαλύτερο λ → αυστηρότερη ποινή</span></div></label>
    <label>γ · uncertainty penalty <div class="controls"><input id="gamma" type="number" min="0" max="5" step=".1" value=".5"><span class="sub">Ποινή μεταβλητότητας</span></div></label>
@@ -179,16 +191,16 @@ tbody tr:hover{background:rgba(114,240,209,.045)}
  </article>
 </section>
 <section class="panel" id="forecast-ledger" style="margin-top:16px">
- <div class="panel-head"><div><div class="section-kicker">05 / Audit trail</div><h2>Forecast ledger</h2><div class="sub">Καταγραφή προβλέψεων ανά ημερομηνία προέλευσης· οι εκτιμήσεις δεν ξαναγράφονται εκ των υστέρων</div></div><div class="actions"><button id="exportForecasts">Export forecasts CSV</button><button id="exportPrices">Export prices CSV</button></div></div>
+ <div class="panel-head"><div><div class="section-kicker">06 / Ιστορικό ελέγχου</div><h2>Αρχείο προβλέψεων</h2><div class="sub">Οι αρχικές εκτιμήσεις παραμένουν καταγεγραμμένες και δεν ξαναγράφονται εκ των υστέρων</div></div><div class="actions"><button id="exportForecasts">Εξαγωγή προβλέψεων</button><button id="exportPrices">Εξαγωγή τιμών</button></div></div>
  <div class="tablewrap"><table><thead><tr><th>Origin</th><th>Horizon</th><th>Target</th><th>Predicted</th><th>Realized</th><th>Status</th></tr></thead><tbody id="ledger"><tr><td colspan="6" class="empty">Δεν έχουν φορτωθεί στοιχεία.</td></tr></tbody></table></div>
 </section>
 <section class="panel" id="quality" style="margin-top:16px">
- <div class="panel-head"><div><div class="section-kicker">06 / Integrity checks</div><h2>Research Quality Sentinel</h2><div class="sub">Έλεγχοι ακεραιότητας δεδομένων, φρεσκάδας, κενών και προέλευσης</div></div><span class="chip">FAIL-SAFE</span></div>
+ <div class="panel-head"><div><div class="section-kicker">07 / Έλεγχοι δεδομένων</div><h2>Ποιότητα και ενημέρωση</h2><div class="sub">Έλεγχοι ακεραιότητας, φρεσκάδας, κενών και πηγής</div></div><span class="chip">ΑΣΦΑΛΗΣ ΛΕΙΤΟΥΡΓΙΑ</span></div>
  <div class="note-box" id="qualityStatus">Φόρτωση αναφοράς ποιότητας…</div>
  <div id="qualityDetails" class="sub" style="margin-top:10px"></div>
 </section>
 <section class="panel" id="arena" style="margin-top:16px">
- <div class="panel-head"><div><div class="section-kicker">07 / Out-of-sample</div><h2>Model Arena · Walk-forward</h2><div class="sub">Ιστορικές προσομοιώσεις ξεχωριστά από τις πραγματικές προβλέψεις του ledger</div></div><span class="chip">OUT-OF-SAMPLE BY ORIGIN</span></div>
+ <div class="panel-head"><div><div class="section-kicker">08 / Δοκιμές σε άγνωστο δείγμα</div><h2>Σύγκριση μοντέλων</h2><div class="sub">Ιστορικές προσομοιώσεις χωριστά από τις πραγματικές καταγεγραμμένες προβλέψεις</div></div><span class="chip">WALK-FORWARD</span></div>
  <div class="note-box" id="arenaStatus">Φόρτωση αποτελεσμάτων walk-forward…</div>
  <div id="arenaTables"></div>\n <div class="note-box" id="adaptiveStatus" style="margin-top:12px">Φόρτωση adaptive research…</div>\n <div id="adaptiveDetails" class="sub" style="margin-top:10px"></div>
  <p class="fineprint">MAE/RMSE μετρώνται σε log-return. Directional accuracy μετρά μόνο περιπτώσεις με μη μηδενική πραγματική απόδοση· μηδενική πρόβλεψη θεωρείται λανθασμένη κατεύθυνση. Skill = 1 − MAE μοντέλου / MAE zero baseline. Οι καθημερινές προβλέψεις επικαλύπτονται· η ξεχωριστή στήλη μη επικαλυπτόμενου δείγματος μειώνει, αλλά δεν εξαλείφει, τους στατιστικούς περιορισμούς.</p>
@@ -209,12 +221,12 @@ const fmtPct = n => Number.isFinite(n) ? (n*100).toLocaleString("el-GR",{maximum
 const fmtDate = d => d ? new Date(d+"T00:00:00Z").toLocaleDateString("el-GR",{day:"2-digit",month:"short",year:"numeric",timeZone:"UTC"}) : "—";
 async function loadJSON(path,fallback){try{const r=await fetch(path+"?v="+Date.now(),{cache:"no-store"});if(!r.ok)throw Error(r.status);return await r.json()}catch(e){return fallback}}
 function setStatus(ok,text){$("status").innerHTML='<span class="dot" style="background:'+(ok?"var(--green)":"var(--amber)")+'"></span><span>'+text+'</span>'}
-function draw(canvas,series,mini=false){const ctx=canvas.getContext("2d"),rect=canvas.getBoundingClientRect(),dpr=window.devicePixelRatio||1;canvas.width=Math.max(1,rect.width*dpr);canvas.height=Math.max(1,rect.height*dpr);ctx.scale(dpr,dpr);const w=rect.width,h=rect.height;ctx.clearRect(0,0,w,h);if(!series||series.length<2){ctx.fillStyle="#91a0bd";ctx.font="12px system-ui";ctx.fillText("Δεν υπάρχουν αρκετά δεδομένα",12,24);return}
+function draw(canvas,series,mini=false){const ctx=canvas.getContext("2d"),rect=canvas.getBoundingClientRect(),dpr=window.devicePixelRatio||1;canvas.width=Math.max(1,rect.width*dpr);canvas.height=Math.max(1,rect.height*dpr);ctx.scale(dpr,dpr);const w=rect.width,h=rect.height;ctx.clearRect(0,0,w,h);if(!series||series.length<2){ctx.fillStyle="#718184";ctx.font="12px system-ui";ctx.fillText("Δεν υπάρχουν αρκετά δεδομένα",12,24);return}
 const vals=series.map(x=>x.close),min=Math.min(...vals),max=Math.max(...vals),pad=mini?8:22;const y=v=>h-pad-(v-min)/(max-min||1)*(h-pad*2),x=i=>pad+i/(vals.length-1)*(w-pad*2);
-if(!mini){ctx.strokeStyle="#263550";ctx.lineWidth=1;for(let j=0;j<4;j++){const yy=pad+j*(h-2*pad)/3;ctx.beginPath();ctx.moveTo(pad,yy);ctx.lineTo(w-pad,yy);ctx.stroke()}}
+if(!mini){ctx.strokeStyle="rgba(34,72,64,.13)";ctx.lineWidth=1;for(let j=0;j<4;j++){const yy=pad+j*(h-2*pad)/3;ctx.beginPath();ctx.moveTo(pad,yy);ctx.lineTo(w-pad,yy);ctx.stroke()}}
 const grad=ctx.createLinearGradient(0,pad,0,h);grad.addColorStop(0,"rgba(105,224,208,.23)");grad.addColorStop(1,"rgba(105,224,208,0)");ctx.beginPath();vals.forEach((v,i)=>i?ctx.lineTo(x(i),y(v)):ctx.moveTo(x(i),y(v)));ctx.lineTo(x(vals.length-1),h-pad);ctx.lineTo(x(0),h-pad);ctx.closePath();ctx.fillStyle=grad;ctx.fill();
-ctx.beginPath();vals.forEach((v,i)=>i?ctx.lineTo(x(i),y(v)):ctx.moveTo(x(i),y(v)));ctx.strokeStyle="#69e0d0";ctx.lineWidth=2;ctx.stroke();
-if(!mini){ctx.fillStyle="#91a0bd";ctx.font="10px system-ui";ctx.fillText(fmtEUR(max),pad,12);ctx.fillText(fmtEUR(min),pad,h-4)}}
+ctx.beginPath();vals.forEach((v,i)=>i?ctx.lineTo(x(i),y(v)):ctx.moveTo(x(i),y(v)));ctx.strokeStyle=mini?"#80ead7":"#118273";ctx.lineWidth=2.2;ctx.stroke();
+if(!mini){ctx.fillStyle="#657a7b";ctx.font="10px system-ui";ctx.fillText(fmtEUR(max),pad,12);ctx.fillText(fmtEUR(min),pad,h-4)}}
 function renderMarketIntelligence(){
  if(prices.length<2)return;
  const last=prices[prices.length-1],ret=(days)=>{if(prices.length<=days)return null;const origin=prices[prices.length-1-days],start=new Date(origin.date+"T00:00:00Z"),end=new Date(last.date+"T00:00:00Z");if((end-start)/86400000!==days)return null;const segment=prices.slice(-days-1);if(segment.some((p,i)=>i>0&&(new Date(p.date+"T00:00:00Z")-new Date(segment[i-1].date+"T00:00:00Z"))/86400000!==1))return null;return last.close/origin.close-1};
