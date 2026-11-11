@@ -23,6 +23,31 @@ sentinel = importlib.util.module_from_spec(sentinel_spec)
 sentinel_spec.loader.exec_module(sentinel)
 
 class ForecastPipelineTests(unittest.TestCase):
+    def test_intraday_fetch_keeps_only_completed_hours_and_validates_ticker(self):
+        now = datetime.now(timezone.utc)
+        current_hour = int(now.replace(minute=0, second=0, microsecond=0).timestamp())
+        candle = lambda opened, close: [opened, "1", "2", "0.5", str(close), "1", "12.5", 2]
+        hourly_payload = {"error": [], "result": {"XXBTZEUR": [
+            candle(current_hour - 7200, 100), candle(current_hour, 999)], "last": current_hour}}
+        ticker = {"c": ["110", "1"], "b": ["109", "1", "1"], "a": ["111", "1", "1"],
+                  "h": ["120", "121"], "l": ["90", "89"], "o": "100",
+                  "v": ["30", "31"], "p": ["105", "106"], "t": [10, 11]}
+        ticker_payload = {"error": [], "result": {"XXBTZEUR": ticker}}
+        with patch.object(module, "request_json", side_effect=[hourly_payload, ticker_payload]):
+            hours, snapshot = module.fetch_intraday_market()
+        self.assertEqual(len(hours), 1)
+        self.assertEqual(hours[0]["close"], 100)
+        self.assertEqual(snapshot["last_eur"], 110)
+        self.assertEqual(snapshot["open_24h_eur"], 100)
+        self.assertEqual(snapshot["high_24h_eur"], 121)
+        self.assertEqual(snapshot["volume_24h_btc"], 31)
+        self.assertEqual(snapshot["trades_24h"], 11)
+
+    def test_intraday_fetch_rejects_provider_errors(self):
+        with patch.object(module, "request_json", return_value={"error": ["unavailable"], "result": {}}):
+            with self.assertRaisesRegex(RuntimeError, "hourly API error"):
+                module.fetch_intraday_market()
+
     def test_log_return(self):
         prices = [{"date":"2026-01-01","close":100.0},{"date":"2026-01-02","close":110.0}]
         got = module.log_returns(prices)
@@ -323,3 +348,4 @@ class ForecastPipelineTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+

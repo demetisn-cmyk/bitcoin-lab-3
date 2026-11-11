@@ -87,6 +87,11 @@ tbody tr:hover{background:rgba(114,240,209,.045)}
  .creator-mark{margin-top:7px}
 }
 @media(prefers-reduced-motion:reduce){.nav-orbit{animation:none}.nav-link,.nav-link:after{transition:none}}
+/* Observatory layer: live tape, richer context and compact calendar view. */
+.hero{grid-template-columns:1.45fr 1fr}.hero>.panel:first-child{background:radial-gradient(ellipse at 78% 12%,rgba(92,216,196,.11),transparent 44%),linear-gradient(145deg,#14263a,#0b1424)}
+.pulse-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin:16px 0}.pulse-card{min-height:126px;padding:17px;border:1px solid rgba(125,158,194,.16);border-radius:15px;background:linear-gradient(145deg,rgba(16,27,44,.96),rgba(9,16,28,.96));transition:transform .2s ease,border-color .2s ease}.pulse-card:hover{transform:translateY(-2px);border-color:rgba(114,240,209,.35)}.pulse-card .label{font-size:12px;color:var(--muted)}.pulse-card .value{margin:12px 0 4px;font-size:clamp(19px,2vw,26px);font-weight:760;letter-spacing:-.04em;font-variant-numeric:tabular-nums}.pulse-card .note{font-size:11px;color:var(--muted)}
+.market-section{display:grid;grid-template-columns:1.3fr .9fr;gap:16px;margin-top:16px}.tape-chart{height:210px}.heatmap{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:7px}.heat-cell{min-height:64px;padding:9px 8px;border-radius:10px;background:#152235;border:1px solid rgba(255,255,255,.045)}.heat-cell b{display:block;font-size:12px}.heat-cell span{display:block;margin-top:5px;font-size:12px;font-variant-numeric:tabular-nums}.market-kicker{display:flex;align-items:center;gap:8px}.fresh-dot{width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 12px rgba(130,230,180,.55)}
+@media(max-width:850px){.pulse-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.market-section{grid-template-columns:1fr}.heatmap{grid-template-columns:repeat(4,minmax(0,1fr))}}@media(max-width:460px){.pulse-grid{gap:8px}.pulse-card{min-height:112px;padding:12px}.heatmap{grid-template-columns:repeat(3,minmax(0,1fr))}}
 </style>
 </head>
 <body>
@@ -101,19 +106,20 @@ tbody tr:hover{background:rgba(114,240,209,.045)}
   <span class="nav-label"><span class="nav-orbit" aria-hidden="true"></span><span class="nav-guide">Explore</span><b id="navCurrent">Overview</b></span>
   <a class="nav-link active" href="#overview"><span class="nav-index">01</span> Overview</a>
   <a class="nav-link" href="#intelligence"><span class="nav-index">02</span> Intelligence</a>
-  <a class="nav-link" href="#history"><span class="nav-index">03</span> Price history</a>
-  <a class="nav-link" href="#controls"><span class="nav-index">04</span> Lab controls</a>
-  <a class="nav-link" href="#forecast-ledger"><span class="nav-index">05</span> Forecast ledger</a>
-  <a class="nav-link" href="#quality"><span class="nav-index">06</span> Data quality</a>
-  <a class="nav-link" href="#arena"><span class="nav-index">07</span> Model arena</a>
+  <a class="nav-link" href="#market-map"><span class="nav-index">03</span> Market map</a>
+  <a class="nav-link" href="#history"><span class="nav-index">04</span> Price history</a>
+  <a class="nav-link" href="#controls"><span class="nav-index">05</span> Lab controls</a>
+  <a class="nav-link" href="#forecast-ledger"><span class="nav-index">06</span> Forecast ledger</a>
+  <a class="nav-link" href="#quality"><span class="nav-index">07</span> Data quality</a>
+  <a class="nav-link" href="#arena"><span class="nav-index">08</span> Model arena</a>
  </div>
  <div class="progress-track" aria-hidden="true"><div class="progress-bar" id="scrollProgress"></div></div>
 </nav>
 <section class="hero" id="overview">
  <article class="panel">
-  <div class="panel-head"><div><h2>Αγορά · BTC / EUR</h2><div class="sub">Η πιο πρόσφατη διαθέσιμη ημερήσια τιμή</div></div><span class="chip" id="sourceChip">MARKET DATA</span></div>
-  <div class="hero-price" id="price">—</div><div class="meta"><span>Ημερομηνία <b id="priceDate">—</b></span><span>24h <b id="change24">—</b></span><span>Δείγματα <b id="sampleCount">—</b></span></div>
-  <div style="height:15px"></div><div class="chartbox" style="height:180px"><canvas id="miniChart" aria-label="Γράφημα ιστορικής τιμής BTC/EUR"></canvas></div>
+  <div class="panel-head"><div><div class="section-kicker">The market, in context</div><h2>Bitcoin / Euro</h2><div class="sub" id="priceContext">Αγορά BTC/EUR · ενημέρωση πηγής</div></div><span class="chip" id="sourceChip">MARKET DATA</span></div>
+  <div class="hero-price" id="price">—</div><div class="meta"><span>Τελευταίο στοιχείο <b id="priceDate">—</b></span><span>24h <b id="change24">—</b></span><span>Ημερήσια δείγματα <b id="sampleCount">—</b></span></div>
+  <div style="height:15px"></div><div class="chartbox" style="height:180px"><canvas id="miniChart" aria-label="Γράφημα ιστορικής τιμής BTC/EUR"></canvas></div><div class="sub">Το γράφημα δείχνει ημερήσια κλεισίματα· η τιμή επάνω είναι το πιο πρόσφατο spot στιγμιότυπο.</div>
  </article>
  <article class="panel">
   <div class="panel-head"><div><h2>Forecast engine</h2><div class="sub">Σήμα μοντέλου, όχι εντολή συναλλαγής</div></div><span class="chip">30D / 90D</span></div>
@@ -121,6 +127,12 @@ tbody tr:hover{background:rgba(114,240,209,.045)}
   <div style="height:14px"></div><div class="forecast-grid" id="forecastCards"><div class="empty">Φόρτωση προβλέψεων…</div></div>
   <div class="note-box" style="margin-top:12px">Η εκτίμηση βασίζεται σε συρρικνωμένο ιστορικό μέσο ημερήσιων log-returns. Η αβεβαιότητα παραμένει υψηλή και το μοντέλο μπορεί να αποδίδει χειρότερα από μηδενική πρόβλεψη.</div>
  </article>
+</section>
+<section class="pulse-grid" aria-label="Στιγμιότυπο αγοράς">
+ <article class="pulse-card"><div class="label">Εύρος 24ώρου</div><div class="value" id="range24">—</div><div class="note">Kraken spot · υψηλό / χαμηλό</div></article>
+ <article class="pulse-card"><div class="label">Όγκος 24ώρου</div><div class="value" id="volume24">—</div><div class="note">BTC στο Kraken</div></article>
+ <article class="pulse-card"><div class="label">Spread προσφοράς</div><div class="value" id="spread24">—</div><div class="note">Bid–ask στιγμιότυπο, όχι βάθος αγοράς</div></article>
+ <article class="pulse-card"><div class="label">Τελευταία ενδοημερήσια ενημέρωση</div><div class="value" id="intradayUpdated">—</div><div class="note" id="intradayNote">Ανεξάρτητη από το ημερήσιο κλείσιμο</div></article>
 </section>
 <div class="grid4">
  <div class="metric"><div class="label">Matured forecasts · selected horizon</div><div class="value" id="matured">—</div><div class="note">Αποτελέσματα που έχουν ωριμάσει</div></div>
@@ -132,14 +144,22 @@ tbody tr:hover{background:rgba(114,240,209,.045)}
  <div class="panel-head"><div><div class="section-kicker">02 / Market context</div><h2>Market intelligence</h2><div class="sub">Μετρήσεις που υπολογίζονται από το διαθέσιμο ιστορικό κλεισιμάτων — όχι live order-book στοιχεία</div></div><span class="chip">QUANT SNAPSHOT</span></div>
  <div class="grid4" style="margin:0">
   <div class="metric"><div class="label">7D return</div><div class="value" id="ret7d">—</div><div class="note">Μεταβολή τελευταίων 7 ημερήσιων διαστημάτων</div></div>
-  <div class="metric"><div class="label">30D return</div><div class="value" id="ret30d">—</div><div class="note">Μεταβολή τελευταίων 30 ημερήσιων διαστημάτων</div></div>
-  <div class="metric"><div class="label">Distance from ATH</div><div class="value" id="athGap">—</div><div class="note" id="athNote">Υψηλό μέσα στο διαθέσιμο dataset</div></div>
+  <div class="metric"><div class="label">30D return</div><div class="value" id="ret30d">—</div><div class="note">Μεταβολή σε 30 ημερολογιακές ημέρες</div></div>
+  <div class="metric"><div class="label">90D return</div><div class="value" id="ret90d">—</div><div class="note">Μεταβολή σε 90 ημερολογιακές ημέρες</div></div>
+  <div class="metric"><div class="label">365D return</div><div class="value" id="ret365d">—</div><div class="note">Μεταβολή σε 365 ημερολογιακές ημέρες</div></div>
+  <div class="metric"><div class="label">Distance from dataset peak</div><div class="value" id="athGap">—</div><div class="note" id="athNote">Απόσταση από το μέγιστο κλείσιμο του διαθέσιμου αρχείου</div></div>
   <div class="metric"><div class="label">30D realized volatility</div><div class="value" id="vol30d">—</div><div class="note">Ετησιοποιημένη τυπική απόκλιση ημερήσιων log-returns</div></div>
  </div>
  <div class="layout" style="margin-top:14px;grid-template-columns:1fr 1fr">
   <div class="metric"><div class="label">Current drawdown from running peak</div><div class="value" id="drawdown">—</div><div class="note">Πτώση από το υψηλότερο προηγούμενο κλείσιμο στο ιστορικό</div></div>
+  <div class="metric"><div class="label">Drawdown · past year</div><div class="value" id="maxDrawdown1y">—</div><div class="note">Μεγαλύτερη πτώση από προηγούμενη κορυφή στα διαθέσιμα τελευταία 365 διαστήματα</div></div>
+  <div class="metric"><div class="label">Distance from 200D average</div><div class="value" id="sma200Gap">—</div><div class="note">Τιμή spot έναντι απλού μέσου ημερήσιων κλεισιμάτων 200 ημερών</div></div>
   <div class="metric"><div class="label">Trend context</div><div class="value" id="trendLabel">—</div><div class="note" id="trendNote">Σύγκριση τιμής με μέσους όρους 20 και 50 ημερών· περιγραφική ένδειξη, όχι πρόβλεψη</div></div>
  </div>
+</section>
+<section class="market-section" id="market-map">
+ <article class="panel"><div class="panel-head"><div><div class="section-kicker">Monthly rhythm</div><h2>Ημερολόγιο αποδόσεων</h2><div class="sub">Μηνιαίες μεταβολές από ημερήσια κλεισίματα · ο τρέχων μήνας είναι μερικός</div></div><span class="chip">BTC / EUR</span></div><div class="heatmap" id="monthlyHeatmap" aria-live="polite"></div><div class="legend"><span>Θετική απόδοση</span><span>Αρνητική απόδοση</span></div></article>
+ <article class="panel"><div class="panel-head"><div><div class="section-kicker">Intraday tape</div><h2>Κίνηση τελευταίων ωρών</h2><div class="sub" id="hourlyContext">Ολοκληρωμένα ωριαία κεριά Kraken · δεν αποτελούν ημερήσια πρόβλεψη</div></div><span class="chip">1H CLOSE</span></div><div class="chartbox tape-chart"><canvas id="hourlyChart" aria-label="Ωριαίες τιμές BTC EUR"></canvas></div><div class="legend"><span>Ωριαίο κλείσιμο</span></div></article>
 </section>
 <section class="layout" id="history">
  <article class="panel">
@@ -197,24 +217,31 @@ ctx.beginPath();vals.forEach((v,i)=>i?ctx.lineTo(x(i),y(v)):ctx.moveTo(x(i),y(v)
 if(!mini){ctx.fillStyle="#91a0bd";ctx.font="10px system-ui";ctx.fillText(fmtEUR(max),pad,12);ctx.fillText(fmtEUR(min),pad,h-4)}}
 function renderMarketIntelligence(){
  if(prices.length<2)return;
- const last=prices[prices.length-1],ret=(days)=>prices.length>days?last.close/prices[prices.length-1-days].close-1:null;
- const r7=ret(7),r30=ret(30),peak=Math.max(...prices.map(p=>p.close)),gap=last.close/peak-1;
+ const last=prices[prices.length-1],ret=(days)=>{if(prices.length<=days)return null;const origin=prices[prices.length-1-days],start=new Date(origin.date+"T00:00:00Z"),end=new Date(last.date+"T00:00:00Z");if((end-start)/86400000!==days)return null;const segment=prices.slice(-days-1);if(segment.some((p,i)=>i>0&&(new Date(p.date+"T00:00:00Z")-new Date(segment[i-1].date+"T00:00:00Z"))/86400000!==1))return null;return last.close/origin.close-1};
+ const r7=ret(7),r30=ret(30),r90=ret(90),r365=ret(365),peak=Math.max(...prices.map(p=>p.close)),gap=last.close/peak-1;
  let running=0;for(const p of prices)running=Math.max(running,p.close);const dd=last.close/running-1;
- const returns=[];for(let i=Math.max(1,prices.length-30);i<prices.length;i++)returns.push(Math.log(prices[i].close/prices[i-1].close));
- const mean=returns.reduce((a,b)=>a+b,0)/Math.max(1,returns.length),variance=returns.reduce((a,b)=>a+(b-mean)**2,0)/Math.max(1,returns.length),vol=Math.sqrt(variance*365);
- const avg=n=>{const s=prices.slice(-n);return s.length===n?s.reduce((a,p)=>a+p.close,0)/n:null},ma20=avg(20),ma50=avg(50);
+ const returns=[];for(let i=Math.max(1,prices.length-30);i<prices.length;i++){if((new Date(prices[i].date+"T00:00:00Z")-new Date(prices[i-1].date+"T00:00:00Z"))/86400000!==1){returns.length=0;break}returns.push(Math.log(prices[i].close/prices[i-1].close))}
+ const mean=returns.reduce((a,b)=>a+b,0)/Math.max(1,returns.length),variance=returns.reduce((a,b)=>a+(b-mean)**2,0)/Math.max(1,returns.length),vol=returns.length===30?Math.sqrt(variance*365):null;
+ const avg=n=>{const s=prices.slice(-n);if(s.length!==n)return null;for(let i=1;i<s.length;i++)if((new Date(s[i].date+"T00:00:00Z")-new Date(s[i-1].date+"T00:00:00Z"))/86400000!==1)return null;return s.reduce((a,p)=>a+p.close,0)/n},ma20=avg(20),ma50=avg(50),ma200=avg(200);
+ let maxDd1y=null;const year=prices.slice(-366);if(year.length===366&&year.every((p,i)=>i===0||(new Date(p.date+"T00:00:00Z")-new Date(year[i-1].date+"T00:00:00Z"))/86400000===1)){let top=year[0].close;maxDd1y=0;for(const p of year){top=Math.max(top,p.close);maxDd1y=Math.min(maxDd1y,p.close/top-1)}}
  const put=(id,val,color)=>{const el=$(id);el.textContent=val;el.style.color=color||"var(--text)"};
  put("ret7d",r7===null?"—":fmtPct(r7),r7===null?"var(--muted)":r7>=0?"var(--green)":"var(--red)");
  put("ret30d",r30===null?"—":fmtPct(r30),r30===null?"var(--muted)":r30>=0?"var(--green)":"var(--red)");
+ put("ret90d",r90===null?"—":fmtPct(r90),r90===null?"var(--muted)":r90>=0?"var(--green)":"var(--red)");
+ put("ret365d",r365===null?"—":fmtPct(r365),r365===null?"var(--muted)":r365>=0?"var(--green)":"var(--red)");
  put("athGap",fmtPct(gap),gap>=-.03?"var(--green)":"var(--amber)");
- $("athNote").textContent="Ιστορικό υψηλό dataset: "+fmtEUR(peak);
- put("vol30d",fmtPct(vol),"var(--amber)");
+ $("athNote").textContent="Μέγιστο ημερήσιο κλείσιμο στο διαθέσιμο ιστορικό: "+fmtEUR(peak);
+ put("vol30d",vol===null?"—":fmtPct(vol),"var(--amber)");
  put("drawdown",fmtPct(dd),dd>=-.05?"var(--green)":"var(--red)");
+ put("maxDrawdown1y",maxDd1y===null?"—":fmtPct(maxDd1y),"var(--amber)");
+ put("sma200Gap",ma200===null?"—":fmtPct(last.close/ma200-1),"var(--amber)");
  let label="Μικτό / ουδέτερο",color="var(--amber)";
  if(ma20!==null&&ma50!==null){if(last.close>ma20&&ma20>ma50){label="Θετική διάταξη";color="var(--green)"}else if(last.close<ma20&&ma20<ma50){label="Αρνητική διάταξη";color="var(--red)"}}
  put("trendLabel",label,color);
  $("trendNote").textContent=ma20&&ma50?"Τιμή "+fmtEUR(last.close)+" · MA20 "+fmtEUR(ma20)+" · MA50 "+fmtEUR(ma50):"Χρειάζονται τουλάχιστον 50 ημερήσιες τιμές.";
 }
+function renderMonthlyHeatmap(){const grouped=new Map();let previous=null;for(const p of prices){const key=p.date.slice(0,7),oneDayAfter=previous&&(new Date(p.date+"T00:00:00Z")-new Date(previous.date+"T00:00:00Z"))/86400000===1;if(!grouped.has(key))grouped.set(key,{first:oneDayAfter?previous.close:p.close,last:p.close});else grouped.get(key).last=p.close;previous=p}const rows=[...grouped.entries()].slice(-18);$("monthlyHeatmap").innerHTML=rows.map(([month,x])=>{const r=x.last/x.first-1,positive=r>=0,alpha=Math.min(.25,.06+Math.abs(r)*.8),color=positive?"rgba(105,224,208,"+alpha+")":"rgba(255,142,155,"+alpha+")",label=new Date(month+"-01T00:00:00Z").toLocaleDateString("el-GR",{month:"short",year:"2-digit",timeZone:"UTC"});return '<div class="heat-cell" style="background:'+color+'" title="'+month+': '+fmtPct(r)+'"><b>'+label+'</b><span>'+fmtPct(r)+'</span></div>'}).join("")||'<div class="empty">Δεν υπάρχουν αρκετά μηνιαία στοιχεία.</div>'}
+function renderIntraday(){const snapshot=latest.market_snapshot||null,hours=Array.isArray(latest.hourly_prices)?latest.hourly_prices:[];if(snapshot){const price=snapshot.last_eur,open=snapshot.open_24h_eur;$("price").textContent=fmtEUR(price);$("priceDate").textContent=new Date(snapshot.observed_at_utc).toLocaleString("el-GR",{dateStyle:"medium",timeStyle:"short",timeZone:"UTC"})+" UTC";$("change24").textContent=Number.isFinite(open)&&open>0?fmtPct(price/open-1):"—";$("change24").style.color=Number.isFinite(open)&&price>=open?"var(--green)":"var(--red)";$("priceContext").textContent="Τελευταία συναλλαγή spot · "+snapshot.source;$("range24").textContent=fmtEUR(snapshot.low_24h_eur)+" — "+fmtEUR(snapshot.high_24h_eur);$("volume24").textContent=Number(snapshot.volume_24h_btc).toLocaleString("el-GR",{maximumFractionDigits:1})+" BTC";$("spread24").textContent=fmtPct(snapshot.spread_pct);$("sourceChip").textContent="KRAKEN SPOT"}else{$("range24").textContent="—";$("volume24").textContent="—";$("spread24").textContent="—";$("priceContext").textContent="Ημερήσιο κλείσιμο · δεν υπάρχει πρόσφατο στιγμιότυπο spot"}const updated=latest.hourly_updated_at;$("intradayUpdated").textContent=updated?new Date(updated).toLocaleTimeString("el-GR",{hour:"2-digit",minute:"2-digit",timeZone:"UTC"})+" UTC":"—";$("intradayNote").textContent=latest.intraday_status==="ok"?"Kraken · ολοκληρωμένα ωριαία δεδομένα":latest.intraday_status==="stale"?"Η νέα λήψη απέτυχε · εμφανίζονται παλαιότερα δεδομένα":"Δεν διατίθενται ακόμη ωριαία δεδομένα";$("hourlyContext").textContent=hours.length?hours.length+" ολοκληρωμένα ωριαία κεριά · τελευταία ώρα "+hours[hours.length-1].time_utc:"Τα ωριαία στοιχεία θα εμφανιστούν μετά την επιτυχημένη ενημέρωση";setStatus(latest.intraday_status==="ok","Ημερήσια σειρά έως "+fmtDate(prices[prices.length-1]?.date)+" · ενδοημερήσια "+(latest.intraday_status||"μη διαθέσιμα"));draw($("hourlyChart"),hours.slice(-48),false)}
 function calcInteractive(){if(prices.length<61)return;const lb=Number($("lookback").value),h=Number($("horizon").value),windowPrices=prices.slice(-(lb+1));const rs=[];for(let i=1;i<windowPrices.length;i++)rs.push(Math.log(windowPrices[i].close/windowPrices[i-1].close));if(rs.length<30)return;
 const mean=rs.reduce((a,b)=>a+b,0)/rs.length,variance=rs.reduce((a,b)=>a+(b-mean)**2,0)/rs.length,sd=Math.sqrt(variance),sorted=[...rs].sort((a,b)=>a-b),q=sorted[Math.max(0,Math.floor((sorted.length-1)*.05))],mu=mean*h*.35,tail=Math.max(0,-q)*Math.sqrt(h),uncertainty=1.645*sd*Math.sqrt(h),lambda=Math.max(0,Number($("lambda").value)||0),gamma=Math.max(0,Number($("gamma").value)||0),cost=Math.max(0,Number($("cost").value)||0)/100,score=mu-lambda*tail-gamma*uncertainty-cost;
 $("score").textContent=fmtPct(score);$("score").style.color=score>0?"var(--green)":score<0?"var(--red)":"var(--amber)";$("scoreNote").textContent="μ "+fmtPct(mu)+" · tail "+fmtPct(tail)+" · uncertainty "+fmtPct(uncertainty)+" · cost "+fmtPct(cost);}
@@ -273,4 +300,8 @@ async function init(){latest=await loadJSON("data/latest.json",{prices:[],status
 draw($("miniChart"),prices.slice(-90),true);draw($("priceChart"),prices.slice(-Number($("range").value)));renderForecasts();metrics();renderLedger();renderMarketIntelligence();renderArena();renderQuality();renderAdaptive();calcInteractive();}
 $("horizon").addEventListener("change",()=>{renderForecasts();metrics();calcInteractive()});$("range").addEventListener("change",()=>draw($("priceChart"),prices.slice(-Number($("range").value))));["lambda","gamma","cost","lookback"].forEach(id=>$(id).addEventListener("input",calcInteractive));$("exportPrices").addEventListener("click",()=>csvDownload("bitcoin-lab-btc-eur-prices.csv",[["date","close_eur"],...prices.map(p=>[p.date,p.close])]));$("exportForecasts").addEventListener("click",()=>{const fs=ledger.forecasts||[];csvDownload("bitcoin-lab-forecast-ledger.csv",[["id","origin_date","target_date","horizon_days","model","predicted_log_return","risk_adjusted_score","realized_log_return","status"],...fs.map(f=>[f.id,f.origin_date,f.target_date,f.horizon_days,f.model,f.predicted_log_return,f.risk_adjusted_score,f.realized_log_return,f.status])])});window.addEventListener("resize",()=>{draw($("miniChart"),prices.slice(-90),true);draw($("priceChart"),prices.slice(-Number($("range").value)))});$("backTop").addEventListener("click",()=>window.scrollTo({top:0,behavior:matchMedia("(prefers-reduced-motion: reduce)").matches?"auto":"smooth"}));setupNavigation();init();
 </script>
+<script>
+(async()=>{for(let i=0;i<100&&!prices.length;i++)await new Promise(resolve=>setTimeout(resolve,100));if(prices.length){renderIntraday();renderMonthlyHeatmap();window.addEventListener("resize",()=>draw($("hourlyChart"),(latest.hourly_prices||[]).slice(-48),false))}})();
+</script>
 </body></html>
+
