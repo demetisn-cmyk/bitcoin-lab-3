@@ -13,6 +13,8 @@ LEDGER = ROOT / "data" / "forecasts.json"
 COINGECKO_API = "https://api.coingecko.com/api/v3/coins/bitcoin/market_chart?vs_currency=eur&days=730&interval=daily"
 BINANCE_API = "https://api.binance.com/api/v3/klines?symbol=BTCEUR&interval=1d&limit=1000"
 KRAKEN_API = "https://api.kraken.com/0/public/OHLC?pair=XBTEUR&interval=1440"
+KRAKEN_HOURLY_API = "https://api.kraken.com/0/public/OHLC?pair=XBTEUR&interval=60"
+KRAKEN_TICKER_API = "https://api.kraken.com/0/public/Ticker?pair=XBTEUR"
 HORIZONS = (30, 90)
 LOOKBACK = 180
 SHRINKAGE = 0.35
@@ -178,6 +180,49 @@ def fetch_prices():
         except Exception as exc:
             errors.append(f"{name}: {exc}")
     raise RuntimeError("All market-data providers failed. " + " | ".join(errors))
+
+def fetch_intraday_market():
+    """Fetch completed Kraken hourly candles and a separate live ticker snapshot."""
+    now = datetime.now(timezone.utc)
+    payload = request_json(KRAKEN_HOURLY_API, {"User-Agent": "BitcoinLab4/1.0"})
+    if payload.get("error"):
+        raise RuntimeError("Kraken hourly API error: " + ", ".join(payload["error"]))
+    result = payload.get("result", {})
+    pair = next((key for key in result if key != "last"), None)
+    hourly = []
+    for candle in result.get(pair, []) if pair else []:
+        if not isinstance(candle, list) or len(candle) < 7:
+            continue
+        opened, close = int(candle[0]), float(candle[4])
+        if opened + 3600 <= int(now.timestamp()) and math.isfinite(close) and close > 0:
+            hourly.append({"time_utc": datetime.fromtimestamp(opened, tz=timezone.utc).isoformat(timespec="minutes"),
+                           "close": round(close, 6), "volume_btc": round(float(candle[6]), 8)})
+    if not hourly:
+        raise RuntimeError("Kraken returned no completed hourly BTC/EUR candles.")
+    ticker_payload = request_json(KRAKEN_TICKER_API, {"User-Agent": "BitcoinLab4/1.0"})
+    if ticker_payload.get("error"):
+        raise RuntimeError("Kraken ticker API error: " + ", ".join(ticker_payload["error"]))
+    ticker_result = ticker_payload.get("result", {})
+    ticker = ticker_result.get(pair) or next(iter(ticker_result.values()), None)
+    if not isinstance(ticker, dict):
+        raise RuntimeError("Kraken returned an unexpected ticker payload.")
+    def value(key, index=0):
+        raw = ticker[key]
+        number = float(raw[index] if isinstance(raw, (list, tuple)) else raw)
+        if not math.isfinite(number) or number < 0:
+            raise ValueError("invalid ticker value")
+        return round(number, 8)
+    last, bid, ask = value("c"), value("b"), value("a")
+    if min(last, bid, ask) <= 0 or ask < bid:
+        raise RuntimeError("Kraken ticker contains invalid prices.")
+    snapshot = {"source": "Kraken spot ticker", "pair": "BTC/EUR",
+        "observed_at_utc": now.isoformat(timespec="seconds"), "last_eur": last,
+        "bid_eur": bid, "ask_eur": ask, "spread_pct": round((ask-bid)/((ask+bid)/2), 8),
+        "high_24h_eur": value("h", 1), "low_24h_eur": value("l", 1),
+        "open_24h_eur": value("o"),
+        "volume_24h_btc": value("v", 1), "vwap_24h_eur": value("p", 1),
+        "trades_24h": int(ticker["t"][1])}
+    return hourly[-168:], snapshot
 
 def log_returns(prices):
     """Return only true one-calendar-day log returns; gaps are never mislabeled daily."""
@@ -368,6 +413,14 @@ def main():
         raise RuntimeError("Forecast ledger contains a non-object record; original file preserved.")
     checked_at = datetime.now(timezone.utc).isoformat(timespec="seconds")
     prices_changed = previous_latest.get("prices") != prices or previous_latest.get("source") != source
+    try:
+        hourly_prices, market_snapshot = fetch_intraday_market()
+        intraday_status, intraday_error = "ok", None
+    except Exception as exc:
+        hourly_prices = previous_latest.get("hourly_prices", [])
+        market_snapshot = previous_latest.get("market_snapshot")
+        intraday_status = "stale" if market_snapshot else "unavailable"
+        intraday_error = str(exc)[:240]
     latest = {
         "schema_version": 2,
         "source": source,
@@ -375,6 +428,12 @@ def main():
         "historical_observation_provenance": "unknown_before_observation_level_tracking",
         "currency": "EUR",
         "last_updated": checked_at if prices_changed or not previous_latest.get("last_updated") else previous_latest["last_updated"],
+        "intraday_status": intraday_status,
+        "intraday_error": intraday_error,
+        "hourly_source": "Kraken spot OHLC · 1h" if hourly_prices else None,
+        "hourly_updated_at": checked_at if intraday_status == "ok" else previous_latest.get("hourly_updated_at"),
+        "hourly_prices": hourly_prices,
+        "market_snapshot": market_snapshot,
         "prices": prices,
         "status": "ok"
     }
@@ -400,7 +459,7 @@ def main():
     write_json(LEDGER, ledger)
     matured = sum(f.get("status") == "matured" for f in ledger["forecasts"])
     pending = sum(f.get("status") == "pending" for f in ledger["forecasts"])
-    print(f"Updated {len(prices)} daily prices from {source}; ledger has {len(ledger['forecasts'])} forecasts ({matured} matured, {pending} pending).")
+    print(f"Updated {len(prices)} daily prices from {source}; intraday market data: {intraday_status}; ledger has {len(ledger['forecasts'])} forecasts ({matured} matured, {pending} pending).")
     print("Note: forecasts start prospectively; this run does not backfill historical predictions.")
 
 if __name__ == "__main__":
@@ -409,3 +468,4 @@ if __name__ == "__main__":
     except Exception as exc:
         print(f"ERROR: {exc}", file=sys.stderr)
         sys.exit(1)
+
