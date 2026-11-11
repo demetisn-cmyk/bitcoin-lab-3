@@ -5,12 +5,18 @@ A research-first BTC/EUR forecasting dashboard. It is an educational experiment,
 ## What it does
 - Publishes a static dashboard suitable for GitHub Pages.
 - Refreshes BTC/EUR daily prices using the public Kraken exchange API, with Binance and CoinGecko as fallbacks.
+- Refreshes the market twice daily (05:17 and 11:17 UTC). Each run separately fetches a Kraken spot ticker snapshot and completed 1-hour candles; intraday measurements never rewrite the closed daily-price history.
+- Adds a market observatory with the latest available spot price, 24-hour range/change/volume, bid–ask spread snapshot, recent hourly tape, monthly return calendar and descriptive price-history analytics.
 - Produces 30- and 90-day forecasts once per day and stores each forecast with its origin date, before its outcome is known.
 - Evaluates prospective forecasts by horizon against a zero-return baseline; insufficient samples are shown as unavailable rather than zero performance.
 - Runs a separate walk-forward Model Arena with zero-return, trailing historical-mean, shrunk-mean and 30-day momentum candidates. Historical simulations never enter the live forecast ledger.
 - Reports MAE, RMSE, directional accuracy, skill versus zero baseline, sample counts and a non-overlapping-origin subset, separately for 30- and 90-day horizons.
 - Keeps the forecast signal separate from the risk-adjusted research score.
 - Offers CSV exports and records data freshness/source information.
+
+## Market observatory and refresh timing
+
+The daily close history remains the input to forecasts and historical research. The twice-daily Kraken ticker and completed hourly candles are separate, descriptive snapshots; a single exchange's 24-hour volume and bid–ask spread do not represent the whole Bitcoin market or order-book depth. If an intraday request fails, the previous snapshot is retained and labelled stale, or the fields stay unavailable; the daily history and forecast workflow can still complete. GitHub schedules use UTC: the two configured runs are approximately 07:17/13:17 in Athens during winter and 08:17/14:17 during summer time. GitHub may delay scheduled runs, so these are target times rather than a live-feed guarantee.
 
 ## Scientific guardrails
 - Forecasts are **prospective**: the ledger begins when the workflow first runs. It does not pretend that today's model generated historical forecasts.
@@ -87,3 +93,4 @@ Run the deterministic test suite and syntax checks locally:
     python scripts/model_arena.py
 
 The daily workflow also checks dashboard JavaScript syntax, runs the test suite, runs the data-quality sentinel, then builds the Model Arena and adaptive research report. Historical data and all original forecast records are retained. This project remains an educational research lab, not a source of investment advice or evidence of a profitable trading strategy.
+
