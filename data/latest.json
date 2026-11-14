@@ -8,38 +8,8 @@
   "intraday_status": "ok",
   "intraday_error": null,
   "hourly_source": "Kraken spot OHLC · 1h",
-  "hourly_updated_at": "2026-11-14T05:58:32+00:00",
+  "hourly_updated_at": "2026-11-14T11:49:57+00:00",
   "hourly_prices": [
-    {
-      "time_utc": "2026-11-07T05:00+00:00",
-      "close": 68152.1,
-      "volume_btc": 2.67869234
-    },
-    {
-      "time_utc": "2026-11-07T06:00+00:00",
-      "close": 68168.3,
-      "volume_btc": 1.65414508
-    },
-    {
-      "time_utc": "2026-11-07T07:00+00:00",
-      "close": 68233.8,
-      "volume_btc": 4.24521467
-    },
-    {
-      "time_utc": "2026-11-07T08:00+00:00",
-      "close": 68327.2,
-      "volume_btc": 4.71620485
-    },
-    {
-      "time_utc": "2026-11-07T09:00+00:00",
-      "close": 68200.1,
-      "volume_btc": 5.9246271
-    },
-    {
-      "time_utc": "2026-11-07T10:00+00:00",
-      "close": 68151.5,
-      "volume_btc": 2.082514
-    },
     {
       "time_utc": "2026-11-07T11:00+00:00",
       "close": 68140.0,
@@ -849,22 +819,52 @@
       "time_utc": "2026-11-14T04:00+00:00",
       "close": 60840.7,
       "volume_btc": 54.05846436
+    },
+    {
+      "time_utc": "2026-11-14T05:00+00:00",
+      "close": 61001.4,
+      "volume_btc": 10.75011572
+    },
+    {
+      "time_utc": "2026-11-14T06:00+00:00",
+      "close": 61131.8,
+      "volume_btc": 11.56854468
+    },
+    {
+      "time_utc": "2026-11-14T07:00+00:00",
+      "close": 60937.2,
+      "volume_btc": 15.88430399
+    },
+    {
+      "time_utc": "2026-11-14T08:00+00:00",
+      "close": 60779.4,
+      "volume_btc": 17.49491626
+    },
+    {
+      "time_utc": "2026-11-14T09:00+00:00",
+      "close": 61164.4,
+      "volume_btc": 16.78939825
+    },
+    {
+      "time_utc": "2026-11-14T10:00+00:00",
+      "close": 61080.0,
+      "volume_btc": 16.21786559
     }
   ],
   "market_snapshot": {
     "source": "Kraken spot ticker",
     "pair": "BTC/EUR",
-    "observed_at_utc": "2026-11-14T05:58:32+00:00",
-    "last_eur": 60960.6,
-    "bid_eur": 60950.0,
-    "ask_eur": 60950.1,
-    "spread_pct": 1.64e-06,
+    "observed_at_utc": "2026-11-14T11:49:57+00:00",
+    "last_eur": 61068.9,
+    "bid_eur": 61053.8,
+    "ask_eur": 61063.4,
+    "spread_pct": 0.00015723,
     "high_24h_eur": 63437.7,
     "low_24h_eur": 60323.2,
     "open_24h_eur": 61960.1,
-    "volume_24h_btc": 920.37173883,
-    "vwap_24h_eur": 62033.69365,
-    "trades_24h": 37374
+    "volume_24h_btc": 746.4701799,
+    "vwap_24h_eur": 61795.70367,
+    "trades_24h": 29233
   },
   "prices": [
     {
