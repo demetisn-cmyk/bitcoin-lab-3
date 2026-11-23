@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "generated_at_utc": "2026-11-22T11:52:50.180516+00:00",
+  "generated_at_utc": "2026-11-23T06:18:39.247444+00:00",
   "method": "Chronological 60% initial training period; later validation origins spaced by horizon; each forecast uses data through its origin only; exact calendar targets and consecutive daily prices required.",
   "matured_live_forecasts_evaluated": 0,
   "candidate_models": {
@@ -27,22 +27,22 @@
   "horizons": {
     "30": {
       "horizon_days": 30,
-      "validation_start": "2026-02-07",
-      "validation_end": "2026-11-04",
+      "validation_start": "2026-02-08",
+      "validation_end": "2026-11-05",
       "non_overlapping_n": 9,
       "current_model": "shrunk_trailing_mean_v1",
       "current_model_version": "1.0",
-      "current_mae_log_return": 0.08457659081037053,
-      "zero_baseline_mae_log_return": 0.08412656508671787,
+      "current_mae_log_return": 0.09109120619602931,
+      "zero_baseline_mae_log_return": 0.09080506506622052,
       "candidates": {
         "expanding_mean_v1": {
-          "mae_log_return": 0.08467969170406515,
-          "relative_mae_gain_vs_current": -0.001219023995963492,
-          "relative_mae_gain_vs_zero": -0.006574934050583441,
+          "mae_log_return": 0.09114430657729408,
+          "relative_mae_gain_vs_current": -0.0005829364159532315,
+          "relative_mae_gain_vs_zero": -0.003735931589566806,
           "paired_sign_test_p_vs_current": 0.5,
-          "paired_sign_test_p_vs_zero": 0.98046875,
+          "paired_sign_test_p_vs_zero": 0.91015625,
           "wins_vs_current": 5,
-          "wins_vs_zero": 2,
+          "wins_vs_zero": 3,
           "recommendation": "retain_current_model"
         }
       },
@@ -55,21 +55,21 @@
     },
     "90": {
       "horizon_days": 90,
-      "validation_start": "2026-02-07",
-      "validation_end": "2026-11-04",
+      "validation_start": "2026-02-08",
+      "validation_end": "2026-11-05",
       "non_overlapping_n": 3,
       "current_model": "shrunk_trailing_mean_v1",
       "current_model_version": "1.0",
-      "current_mae_log_return": 0.19891095460810818,
-      "zero_baseline_mae_log_return": 0.1987042138780245,
+      "current_mae_log_return": 0.1757213479304407,
+      "zero_baseline_mae_log_return": 0.17551835979714325,
       "candidates": {
         "expanding_mean_v1": {
-          "mae_log_return": 0.19912507683557432,
-          "relative_mae_gain_vs_current": -0.001076472775911217,
-          "relative_mae_gain_vs_zero": -0.0021180374051259928,
-          "paired_sign_test_p_vs_current": 0.5,
+          "mae_log_return": 0.17592959053691096,
+          "relative_mae_gain_vs_current": -0.0011850728948009956,
+          "relative_mae_gain_vs_zero": -0.002342949992485044,
+          "paired_sign_test_p_vs_current": 0.875,
           "paired_sign_test_p_vs_zero": 0.875,
-          "wins_vs_current": 2,
+          "wins_vs_current": 1,
           "wins_vs_zero": 1,
           "recommendation": "retain_current_model"
         }
@@ -3023,6 +3023,80 @@
               "paired_sign_test_p_vs_current": 0.5,
               "paired_sign_test_p_vs_zero": 0.875,
               "wins_vs_current": 2,
+              "wins_vs_zero": 1,
+              "recommendation": "retain_current_model"
+            }
+          },
+          "matured_live_evaluation": {
+            "n": 0,
+            "model_mae_log_return": null,
+            "zero_baseline_mae_log_return": null,
+            "skill_vs_zero_mae": null
+          }
+        }
+      },
+      "matured_live_forecasts_evaluated": 0,
+      "model_versions": [
+        {
+          "model": "shrunk_trailing_mean_v1",
+          "version": "1.0",
+          "status": "active"
+        },
+        {
+          "model": "expanding_mean_v1",
+          "version": "1.0",
+          "status": "research_candidate"
+        }
+      ]
+    },
+    {
+      "generated_at_utc": "2026-11-23T06:18:39.247444+00:00",
+      "horizons": {
+        "30": {
+          "horizon_days": 30,
+          "validation_start": "2026-02-08",
+          "validation_end": "2026-11-05",
+          "non_overlapping_n": 9,
+          "current_model": "shrunk_trailing_mean_v1",
+          "current_model_version": "1.0",
+          "current_mae_log_return": 0.09109120619602931,
+          "zero_baseline_mae_log_return": 0.09080506506622052,
+          "candidates": {
+            "expanding_mean_v1": {
+              "mae_log_return": 0.09114430657729408,
+              "relative_mae_gain_vs_current": -0.0005829364159532315,
+              "relative_mae_gain_vs_zero": -0.003735931589566806,
+              "paired_sign_test_p_vs_current": 0.5,
+              "paired_sign_test_p_vs_zero": 0.91015625,
+              "wins_vs_current": 5,
+              "wins_vs_zero": 3,
+              "recommendation": "retain_current_model"
+            }
+          },
+          "matured_live_evaluation": {
+            "n": 0,
+            "model_mae_log_return": null,
+            "zero_baseline_mae_log_return": null,
+            "skill_vs_zero_mae": null
+          }
+        },
+        "90": {
+          "horizon_days": 90,
+          "validation_start": "2026-02-08",
+          "validation_end": "2026-11-05",
+          "non_overlapping_n": 3,
+          "current_model": "shrunk_trailing_mean_v1",
+          "current_model_version": "1.0",
+          "current_mae_log_return": 0.1757213479304407,
+          "zero_baseline_mae_log_return": 0.17551835979714325,
+          "candidates": {
+            "expanding_mean_v1": {
+              "mae_log_return": 0.17592959053691096,
+              "relative_mae_gain_vs_current": -0.0011850728948009956,
+              "relative_mae_gain_vs_zero": -0.002342949992485044,
+              "paired_sign_test_p_vs_current": 0.875,
+              "paired_sign_test_p_vs_zero": 0.875,
+              "wins_vs_current": 1,
               "wins_vs_zero": 1,
               "recommendation": "retain_current_model"
             }
