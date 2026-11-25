@@ -4,102 +4,12 @@
   "source_switch_detected": false,
   "historical_observation_provenance": "unknown_before_observation_level_tracking",
   "currency": "EUR",
-  "last_updated": "2026-11-24T06:09:28+00:00",
+  "last_updated": "2026-11-25T06:10:06+00:00",
   "intraday_status": "ok",
   "intraday_error": null,
   "hourly_source": "Kraken spot OHLC · 1h",
-  "hourly_updated_at": "2026-11-24T12:09:02+00:00",
+  "hourly_updated_at": "2026-11-25T06:10:06+00:00",
   "hourly_prices": [
-    {
-      "time_utc": "2026-11-17T12:00+00:00",
-      "close": 59133.8,
-      "volume_btc": 22.33329129
-    },
-    {
-      "time_utc": "2026-11-17T13:00+00:00",
-      "close": 59263.8,
-      "volume_btc": 16.11090402
-    },
-    {
-      "time_utc": "2026-11-17T14:00+00:00",
-      "close": 59094.1,
-      "volume_btc": 65.39150433
-    },
-    {
-      "time_utc": "2026-11-17T15:00+00:00",
-      "close": 58250.0,
-      "volume_btc": 115.98998317
-    },
-    {
-      "time_utc": "2026-11-17T16:00+00:00",
-      "close": 57822.5,
-      "volume_btc": 75.72621802
-    },
-    {
-      "time_utc": "2026-11-17T17:00+00:00",
-      "close": 57875.9,
-      "volume_btc": 32.85388607
-    },
-    {
-      "time_utc": "2026-11-17T18:00+00:00",
-      "close": 57868.6,
-      "volume_btc": 19.74310811
-    },
-    {
-      "time_utc": "2026-11-17T19:00+00:00",
-      "close": 57866.9,
-      "volume_btc": 21.26628084
-    },
-    {
-      "time_utc": "2026-11-17T20:00+00:00",
-      "close": 58080.7,
-      "volume_btc": 22.99455466
-    },
-    {
-      "time_utc": "2026-11-17T21:00+00:00",
-      "close": 58470.0,
-      "volume_btc": 21.62625399
-    },
-    {
-      "time_utc": "2026-11-17T22:00+00:00",
-      "close": 58803.3,
-      "volume_btc": 23.82735073
-    },
-    {
-      "time_utc": "2026-11-17T23:00+00:00",
-      "close": 59026.1,
-      "volume_btc": 25.42944178
-    },
-    {
-      "time_utc": "2026-11-18T00:00+00:00",
-      "close": 58917.3,
-      "volume_btc": 9.32323801
-    },
-    {
-      "time_utc": "2026-11-18T01:00+00:00",
-      "close": 58436.1,
-      "volume_btc": 26.68636673
-    },
-    {
-      "time_utc": "2026-11-18T02:00+00:00",
-      "close": 58495.7,
-      "volume_btc": 14.51324977
-    },
-    {
-      "time_utc": "2026-11-18T03:00+00:00",
-      "close": 58583.1,
-      "volume_btc": 1.24568752
-    },
-    {
-      "time_utc": "2026-11-18T04:00+00:00",
-      "close": 58571.1,
-      "volume_btc": 3.63291225
-    },
-    {
-      "time_utc": "2026-11-18T05:00+00:00",
-      "close": 58850.4,
-      "volume_btc": 5.59662671
-    },
     {
       "time_utc": "2026-11-18T06:00+00:00",
       "close": 58784.3,
@@ -849,28 +759,114 @@
       "time_utc": "2026-11-24T11:00+00:00",
       "close": 55099.9,
       "volume_btc": 45.32183327
+    },
+    {
+      "time_utc": "2026-11-24T12:00+00:00",
+      "close": 55101.8,
+      "volume_btc": 22.46716952
+    },
+    {
+      "time_utc": "2026-11-24T13:00+00:00",
+      "close": 54680.9,
+      "volume_btc": 74.25968352
+    },
+    {
+      "time_utc": "2026-11-24T14:00+00:00",
+      "close": 55035.9,
+      "volume_btc": 55.11300386
+    },
+    {
+      "time_utc": "2026-11-24T15:00+00:00",
+      "close": 54390.6,
+      "volume_btc": 56.04231779
+    },
+    {
+      "time_utc": "2026-11-24T16:00+00:00",
+      "close": 54131.9,
+      "volume_btc": 43.57355041
+    },
+    {
+      "time_utc": "2026-11-24T17:00+00:00",
+      "close": 54733.1,
+      "volume_btc": 29.7506752
+    },
+    {
+      "time_utc": "2026-11-24T18:00+00:00",
+      "close": 54559.0,
+      "volume_btc": 11.70047262
+    },
+    {
+      "time_utc": "2026-11-24T19:00+00:00",
+      "close": 54380.0,
+      "volume_btc": 10.71390703
+    },
+    {
+      "time_utc": "2026-11-24T20:00+00:00",
+      "close": 54447.8,
+      "volume_btc": 14.93146096
+    },
+    {
+      "time_utc": "2026-11-24T21:00+00:00",
+      "close": 54580.0,
+      "volume_btc": 9.48867666
+    },
+    {
+      "time_utc": "2026-11-24T22:00+00:00",
+      "close": 54634.4,
+      "volume_btc": 9.67466107
+    },
+    {
+      "time_utc": "2026-11-24T23:00+00:00",
+      "close": 54510.4,
+      "volume_btc": 11.24252879
+    },
+    {
+      "time_utc": "2026-11-25T00:00+00:00",
+      "close": 54347.8,
+      "volume_btc": 14.89103154
+    },
+    {
+      "time_utc": "2026-11-25T01:00+00:00",
+      "close": 54048.6,
+      "volume_btc": 21.46227189
+    },
+    {
+      "time_utc": "2026-11-25T02:00+00:00",
+      "close": 54020.7,
+      "volume_btc": 8.83371398
+    },
+    {
+      "time_utc": "2026-11-25T03:00+00:00",
+      "close": 54223.4,
+      "volume_btc": 10.38946573
+    },
+    {
+      "time_utc": "2026-11-25T04:00+00:00",
+      "close": 54020.0,
+      "volume_btc": 10.80530834
+    },
+    {
+      "time_utc": "2026-11-25T05:00+00:00",
+      "close": 54002.5,
+      "volume_btc": 9.51441092
     }
   ],
   "market_snapshot": {
     "source": "Kraken spot ticker",
     "pair": "BTC/EUR",
-    "observed_at_utc": "2026-11-24T12:09:02+00:00",
-    "last_eur": 55011.4,
-    "bid_eur": 55008.8,
-    "ask_eur": 55009.4,
-    "spread_pct": 1.091e-05,
-    "high_24h_eur": 58970.0,
-    "low_24h_eur": 54231.7,
-    "open_24h_eur": 56106.7,
-    "volume_24h_btc": 1002.36528948,
-    "vwap_24h_eur": 56434.02998,
-    "trades_24h": 33408
+    "observed_at_utc": "2026-11-25T06:10:06+00:00",
+    "last_eur": 54100.0,
+    "bid_eur": 54099.9,
+    "ask_eur": 54100.0,
+    "spread_pct": 1.85e-06,
+    "high_24h_eur": 55535.7,
+    "low_24h_eur": 53717.0,
+    "open_24h_eur": 54522.5,
+    "volume_24h_btc": 642.17459686,
+    "vwap_24h_eur": 54702.67138,
+    "trades_24h": 24852
   },
   "prices": [
-    {
-      "date": "2024-12-04",
-      "close": 93734.9
-    },
     {
       "date": "2024-12-05",
       "close": 91721.5
@@ -3746,6 +3742,10 @@
     {
       "date": "2026-11-23",
       "close": 56124.6
+    },
+    {
+      "date": "2026-11-24",
+      "close": 54510.4
     }
   ],
   "status": "ok"
