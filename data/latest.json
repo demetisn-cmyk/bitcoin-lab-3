@@ -8,28 +8,8 @@
   "intraday_status": "ok",
   "intraday_error": null,
   "hourly_source": "Kraken spot OHLC · 1h",
-  "hourly_updated_at": "2026-11-27T15:06:06+00:00",
+  "hourly_updated_at": "2026-11-27T19:57:11+00:00",
   "hourly_prices": [
-    {
-      "time_utc": "2026-11-20T15:00+00:00",
-      "close": 54108.3,
-      "volume_btc": 273.77597778
-    },
-    {
-      "time_utc": "2026-11-20T16:00+00:00",
-      "close": 54202.3,
-      "volume_btc": 172.39711118
-    },
-    {
-      "time_utc": "2026-11-20T17:00+00:00",
-      "close": 53876.9,
-      "volume_btc": 78.15107336
-    },
-    {
-      "time_utc": "2026-11-20T18:00+00:00",
-      "close": 53240.6,
-      "volume_btc": 158.6991807
-    },
     {
       "time_utc": "2026-11-20T19:00+00:00",
       "close": 53366.4,
@@ -849,22 +829,42 @@
       "time_utc": "2026-11-27T14:00+00:00",
       "close": 54016.7,
       "volume_btc": 126.36847243
+    },
+    {
+      "time_utc": "2026-11-27T15:00+00:00",
+      "close": 54914.4,
+      "volume_btc": 108.49469408
+    },
+    {
+      "time_utc": "2026-11-27T16:00+00:00",
+      "close": 54780.0,
+      "volume_btc": 58.75057546
+    },
+    {
+      "time_utc": "2026-11-27T17:00+00:00",
+      "close": 54750.0,
+      "volume_btc": 23.97782938
+    },
+    {
+      "time_utc": "2026-11-27T18:00+00:00",
+      "close": 54734.7,
+      "volume_btc": 14.47183126
     }
   ],
   "market_snapshot": {
     "source": "Kraken spot ticker",
     "pair": "BTC/EUR",
-    "observed_at_utc": "2026-11-27T15:06:06+00:00",
-    "last_eur": 53787.5,
-    "bid_eur": 53777.2,
-    "ask_eur": 53806.1,
-    "spread_pct": 0.00053726,
+    "observed_at_utc": "2026-11-27T19:57:11+00:00",
+    "last_eur": 54714.3,
+    "bid_eur": 54714.2,
+    "ask_eur": 54714.3,
+    "spread_pct": 1.83e-06,
     "high_24h_eur": 56651.3,
     "low_24h_eur": 53660.5,
     "open_24h_eur": 55160.0,
-    "volume_24h_btc": 639.11051515,
-    "vwap_24h_eur": 55561.60561,
-    "trades_24h": 21189
+    "volume_24h_btc": 746.88417997,
+    "vwap_24h_eur": 55399.52126,
+    "trades_24h": 23830
   },
   "prices": [
     {
